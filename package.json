@@ -5,8 +5,10 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "npm install && npm run build",
+    "build": "tsc",
     "start": "node dist/server.js",
+    "seed": "ts-node src/database/seed.ts",
+    "import": "ts-node src/database/import.ts",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
     "db:seed": "sequelize-cli db:seed:all",

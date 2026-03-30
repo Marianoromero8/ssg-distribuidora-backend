@@ -7,11 +7,9 @@ async function bootstrap() {
   registerAssociations();
   await connectDB();
 
-  // In production, sync creates tables that don't exist yet (safe, non-destructive)
-  if (env.NODE_ENV === 'production') {
-    await sequelize.sync({ alter: false });
-    console.log('Database synced.');
-  }
+  // Creates tables that don't exist yet — safe, never drops data
+  await sequelize.sync({ alter: false });
+  console.log('Database synced.');
 
   app.listen(env.PORT, () => {
     console.log(`Server running on port ${env.PORT} [${env.NODE_ENV}]`);

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \":*)",
+      "Bash(timeout 8 node dist/server.js)",
+      "Bash(find /c/Users/maria/OneDrive/Escritorio/ssg-distribuidora-backend -name *.test.ts -o -name *.spec.ts)"
+    ]
+  }
+}
