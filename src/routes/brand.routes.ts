@@ -12,6 +12,7 @@ const ctrl = new BrandController();
 
 router.get('/', ctrl.getAll.bind(ctrl));
 router.get('/admin', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.getAllAdmin.bind(ctrl));
+router.get('/admin/all', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.getAllAdminUnpaginated.bind(ctrl));
 router.get('/:id', ctrl.getById.bind(ctrl));
 
 router.post('/', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), validate(createBrandSchema), ctrl.create.bind(ctrl));

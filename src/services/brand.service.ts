@@ -2,6 +2,7 @@ import { BrandRepository } from '../repositories/brand.repository';
 import { CreateBrandDto, UpdateBrandDto } from '../types/brand.types';
 import { AppError } from '../shared/errors/AppError';
 import { NotFoundError } from '../shared/errors/NotFoundError';
+import { PaginationOptions, buildPaginatedResponse } from '../shared/utils/pagination';
 import { uploadToCloudinary } from '../middlewares/upload';
 import { Brand } from '../models/brand.model';
 
@@ -12,8 +13,13 @@ export class BrandService {
     return repo.findAll();
   }
 
-  async getAllAdmin() {
-    return repo.findAllAdmin();
+  async getAllAdmin(pagination: PaginationOptions) {
+    const result = await repo.findAllAdmin(pagination);
+    return buildPaginatedResponse(result, pagination);
+  }
+
+  async getAllAdminUnpaginated() {
+    return repo.findAllAdminUnpaginated();
   }
 
   async getById(id: string) {

@@ -21,7 +21,7 @@ export class ProductService {
   }
 
   async getAllAdmin(
-    filters: { categoryId?: string; brandId?: string; isFeatured?: boolean },
+    filters: { categoryId?: string; brandId?: string; isFeatured?: boolean; available?: boolean },
     pagination: PaginationOptions
   ) {
     const result = await repo.findAllAdmin(filters, pagination);

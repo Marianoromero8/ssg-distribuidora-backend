@@ -19,10 +19,12 @@ export class ProductController {
 
   async getAllAdmin(req: Request, res: Response) {
     const pagination = getPagination(req);
+    const { categoryId, brandId, isFeatured, available } = req.query;
     const filters = {
-      categoryId: req.query.categoryId as string | undefined,
-      brandId: req.query.brandId as string | undefined,
-      isFeatured: req.query.isFeatured === 'true' ? true : undefined,
+      categoryId: categoryId as string | undefined,
+      brandId: brandId as string | undefined,
+      isFeatured: isFeatured === 'true' ? true : undefined,
+      available: available === 'true' ? true : available === 'false' ? false : undefined,
     };
     const result = await service.getAllAdmin(filters, pagination);
     res.json({ status: 'success', data: result });

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BrandService } from '../services/brand.service';
 import { AppError } from '../shared/errors/AppError';
+import { getPagination } from '../shared/utils/pagination';
 
 const service = new BrandService();
 
@@ -10,8 +11,14 @@ export class BrandController {
     res.json({ status: 'success', data: brands });
   }
 
-  async getAllAdmin(_req: Request, res: Response) {
-    const brands = await service.getAllAdmin();
+  async getAllAdmin(req: Request, res: Response) {
+    const pagination = getPagination(req);
+    const result = await service.getAllAdmin(pagination);
+    res.json({ status: 'success', data: result });
+  }
+
+  async getAllAdminUnpaginated(_req: Request, res: Response) {
+    const brands = await service.getAllAdminUnpaginated();
     res.json({ status: 'success', data: brands });
   }
 
