@@ -28,4 +28,9 @@ export class CategoryController {
     const category = await service.update(req.params.id, req.body);
     res.json({ status: 'success', data: category });
   }
+
+  async delete(req: Request, res: Response) {
+    await service.delete(req.params.id);
+    res.status(204).send();
+  }
 }

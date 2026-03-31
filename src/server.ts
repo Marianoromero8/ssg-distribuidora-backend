@@ -7,8 +7,7 @@ async function bootstrap() {
   registerAssociations();
   await connectDB();
 
-  // Creates tables that don't exist yet — safe, never drops data
-  await sequelize.sync({ alter: false });
+  await sequelize.sync({ alter: true });
   console.log('Database synced.');
 
   app.listen(env.PORT, () => {

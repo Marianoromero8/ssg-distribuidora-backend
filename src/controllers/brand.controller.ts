@@ -10,6 +10,11 @@ export class BrandController {
     res.json({ status: 'success', data: brands });
   }
 
+  async getAllAdmin(_req: Request, res: Response) {
+    const brands = await service.getAllAdmin();
+    res.json({ status: 'success', data: brands });
+  }
+
   async getById(req: Request, res: Response) {
     const brand = await service.getById(req.params.id);
     res.json({ status: 'success', data: brand });
@@ -22,6 +27,11 @@ export class BrandController {
 
   async update(req: Request, res: Response) {
     const brand = await service.update(req.params.id, req.body);
+    res.json({ status: 'success', data: brand });
+  }
+
+  async toggleStatus(req: Request, res: Response) {
+    const brand = await service.toggleStatus(req.params.id);
     res.json({ status: 'success', data: brand });
   }
 

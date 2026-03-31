@@ -5,11 +5,12 @@ interface BrandAttributes {
   id: string;
   brandName: string;
   brandImage: string | null;
+  isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface BrandCreationAttributes extends Optional<BrandAttributes, 'id' | 'brandImage'> {}
+interface BrandCreationAttributes extends Optional<BrandAttributes, 'id' | 'brandImage' | 'isActive'> {}
 
 export class Brand
   extends Model<BrandAttributes, BrandCreationAttributes>
@@ -18,6 +19,7 @@ export class Brand
   declare id: string;
   declare brandName: string;
   declare brandImage: string | null;
+  declare isActive: boolean;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -37,6 +39,11 @@ Brand.init(
     brandImage: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {

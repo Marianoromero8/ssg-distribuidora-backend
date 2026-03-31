@@ -20,6 +20,14 @@ export class ProductService {
     return buildPaginatedResponse(result, pagination);
   }
 
+  async getAllAdmin(
+    filters: { categoryId?: string; brandId?: string; isFeatured?: boolean },
+    pagination: PaginationOptions
+  ) {
+    const result = await repo.findAllAdmin(filters, pagination);
+    return buildPaginatedResponse(result, pagination);
+  }
+
   async getById(id: string) {
     const product = await repo.findById(id);
     if (!product) throw new NotFoundError('Product');
@@ -29,27 +37,22 @@ export class ProductService {
   async create(data: CreateProductDto) {
     const brand = await brandRepo.findById(data.brandId);
     if (!brand) throw new NotFoundError('Brand');
-
     const category = await categoryRepo.findById(data.categoryId);
     if (!category) throw new NotFoundError('Category');
-
     return repo.create(data);
   }
 
   async update(id: string, data: UpdateProductDto) {
     const product = await repo.findById(id);
     if (!product) throw new NotFoundError('Product');
-
     if (data.brandId) {
       const brand = await brandRepo.findById(data.brandId);
       if (!brand) throw new NotFoundError('Brand');
     }
-
     if (data.categoryId) {
       const category = await categoryRepo.findById(data.categoryId);
       if (!category) throw new NotFoundError('Category');
     }
-
     await repo.update(id, data);
     return repo.findById(id);
   }
@@ -57,7 +60,6 @@ export class ProductService {
   async uploadImage(id: string, file: Express.Multer.File) {
     const product = await repo.findById(id);
     if (!product) throw new NotFoundError('Product');
-
     const productImage = await uploadToCloudinary(file.buffer, 'ssg/products');
     await Product.update({ productImage }, { where: { id } });
     return repo.findById(id);

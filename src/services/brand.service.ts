@@ -12,6 +12,10 @@ export class BrandService {
     return repo.findAll();
   }
 
+  async getAllAdmin() {
+    return repo.findAllAdmin();
+  }
+
   async getById(id: string) {
     const brand = await repo.findById(id);
     if (!brand) throw new NotFoundError('Brand');
@@ -31,10 +35,16 @@ export class BrandService {
     return repo.findById(id);
   }
 
+  async toggleStatus(id: string) {
+    const brand = await repo.findById(id);
+    if (!brand) throw new NotFoundError('Brand');
+    await repo.toggleStatus(id, !brand.isActive);
+    return repo.findById(id);
+  }
+
   async uploadImage(id: string, file: Express.Multer.File) {
     const brand = await repo.findById(id);
     if (!brand) throw new NotFoundError('Brand');
-
     const brandImage = await uploadToCloudinary(file.buffer, 'ssg/brands');
     await Brand.update({ brandImage }, { where: { id } });
     return repo.findById(id);
