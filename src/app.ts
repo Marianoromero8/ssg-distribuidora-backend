@@ -12,13 +12,22 @@ import productRoutes from "./routes/product.routes";
 import promotionRoutes from "./routes/promotion.routes";
 import bannerRoutes from "./routes/banner.routes";
 import { errorHandler } from "./middlewares/errorHandler";
+import { env } from "./config/env";
 
 const app = express();
+
+const allowedOrigins = [env.FRONTEND_URL, "http://localhost:3000"];
 
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
     optionsSuccessStatus: 200,
   }),
 );
