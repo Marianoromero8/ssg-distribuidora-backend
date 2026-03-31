@@ -18,5 +18,6 @@ router.post('/', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), validate(cr
 router.put('/:id', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), validate(updateBrandSchema), ctrl.update.bind(ctrl));
 router.patch('/:id/status', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.toggleStatus.bind(ctrl));
 router.patch('/:id/image', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), upload.single('image'), ctrl.uploadImage.bind(ctrl));
+router.delete('/:id', authenticate, authorize(Role.ADMIN), ctrl.delete.bind(ctrl));
 
 export default router;

@@ -70,4 +70,10 @@ export class ProductService {
     if (!product) throw new NotFoundError('Product');
     await repo.softDelete(id);
   }
+
+  async hardDelete(id: string) {
+    const product = await repo.findById(id);
+    if (!product) throw new NotFoundError('Product');
+    await repo.hardDelete(id);
+  }
 }

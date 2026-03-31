@@ -49,4 +49,10 @@ export class BrandService {
     await Brand.update({ brandImage }, { where: { id } });
     return repo.findById(id);
   }
+
+  async delete(id: string) {
+    const brand = await repo.findById(id);
+    if (!brand) throw new NotFoundError('Brand');
+    await repo.delete(id);
+  }
 }

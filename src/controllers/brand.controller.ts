@@ -40,4 +40,9 @@ export class BrandController {
     const brand = await service.uploadImage(req.params.id, req.file);
     res.json({ status: 'success', data: brand });
   }
+
+  async delete(req: Request, res: Response) {
+    await service.delete(req.params.id);
+    res.status(204).send();
+  }
 }
