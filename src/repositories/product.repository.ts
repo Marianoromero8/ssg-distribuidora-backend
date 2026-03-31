@@ -9,6 +9,7 @@ interface FilterOptions {
   categoryId?: string;
   brandId?: string;
   isFeatured?: boolean;
+  available?: boolean;
 }
 
 const ASSOCIATIONS = [
@@ -37,6 +38,7 @@ export class ProductRepository {
     if (filters.categoryId) where.categoryId = filters.categoryId;
     if (filters.brandId) where.brandId = filters.brandId;
     if (filters.isFeatured !== undefined) where.isFeatured = filters.isFeatured;
+    if (filters.available !== undefined) where.available = filters.available;
 
     return Product.findAndCountAll({
       where,

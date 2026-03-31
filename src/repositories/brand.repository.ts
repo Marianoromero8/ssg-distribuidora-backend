@@ -1,12 +1,21 @@
 import { Brand } from '../models/brand.model';
 import { CreateBrandDto, UpdateBrandDto } from '../types/brand.types';
+import { PaginationOptions } from '../shared/utils/pagination';
 
 export class BrandRepository {
   findAll() {
     return Brand.findAll({ where: { isActive: true }, order: [['brandName', 'ASC']] });
   }
 
-  findAllAdmin() {
+  findAllAdmin(pagination: PaginationOptions) {
+    return Brand.findAndCountAll({
+      order: [['brandName', 'ASC']],
+      limit: pagination.limit,
+      offset: pagination.offset,
+    });
+  }
+
+  findAllAdminUnpaginated() {
     return Brand.findAll({ order: [['brandName', 'ASC']] });
   }
 
