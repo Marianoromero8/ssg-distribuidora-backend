@@ -53,4 +53,9 @@ export class ProductController {
     await service.delete(req.params.id);
     res.status(204).send();
   }
+
+  async hardDelete(req: Request, res: Response) {
+    await service.hardDelete(req.params.id);
+    res.status(204).send();
+  }
 }

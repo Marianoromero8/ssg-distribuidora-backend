@@ -29,4 +29,8 @@ export class BrandRepository {
   toggleStatus(id: string, isActive: boolean) {
     return Brand.update({ isActive }, { where: { id } });
   }
+
+  delete(id: string) {
+    return Brand.destroy({ where: { id } });
+  }
 }

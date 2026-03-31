@@ -62,4 +62,8 @@ export class ProductRepository {
   softDelete(id: string) {
     return Product.update({ available: false }, { where: { id } });
   }
+
+  hardDelete(id: string) {
+    return Product.destroy({ where: { id } });
+  }
 }
