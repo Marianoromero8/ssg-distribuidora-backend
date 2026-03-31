@@ -11,6 +11,11 @@ interface FilterOptions {
   isFeatured?: boolean;
 }
 
+const ASSOCIATIONS = [
+  { model: Brand, as: 'brand', attributes: ['id', 'brandName', 'brandImage'] },
+  { model: Category, as: 'category', attributes: ['id', 'categoryName', 'parentCategoryId'] },
+];
+
 export class ProductRepository {
   findAll(filters: FilterOptions, pagination: PaginationOptions) {
     const where: WhereOptions = { available: true };
@@ -20,10 +25,22 @@ export class ProductRepository {
 
     return Product.findAndCountAll({
       where,
-      include: [
-        { model: Brand, as: 'brand', attributes: ['id', 'brandName', 'brandImage'] },
-        { model: Category, as: 'category', attributes: ['id', 'categoryName', 'parentCategoryId'] },
-      ],
+      include: ASSOCIATIONS,
+      order: [['productName', 'ASC']],
+      limit: pagination.limit,
+      offset: pagination.offset,
+    });
+  }
+
+  findAllAdmin(filters: FilterOptions, pagination: PaginationOptions) {
+    const where: WhereOptions = {};
+    if (filters.categoryId) where.categoryId = filters.categoryId;
+    if (filters.brandId) where.brandId = filters.brandId;
+    if (filters.isFeatured !== undefined) where.isFeatured = filters.isFeatured;
+
+    return Product.findAndCountAll({
+      where,
+      include: ASSOCIATIONS,
       order: [['productName', 'ASC']],
       limit: pagination.limit,
       offset: pagination.offset,
@@ -31,12 +48,7 @@ export class ProductRepository {
   }
 
   findById(id: string) {
-    return Product.findByPk(id, {
-      include: [
-        { model: Brand, as: 'brand', attributes: ['id', 'brandName', 'brandImage'] },
-        { model: Category, as: 'category', attributes: ['id', 'categoryName', 'parentCategoryId'] },
-      ],
-    });
+    return Product.findByPk(id, { include: ASSOCIATIONS });
   }
 
   create(data: CreateProductDto) {

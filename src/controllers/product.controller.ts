@@ -17,6 +17,17 @@ export class ProductController {
     res.json({ status: 'success', data: result });
   }
 
+  async getAllAdmin(req: Request, res: Response) {
+    const pagination = getPagination(req);
+    const filters = {
+      categoryId: req.query.categoryId as string | undefined,
+      brandId: req.query.brandId as string | undefined,
+      isFeatured: req.query.isFeatured === 'true' ? true : undefined,
+    };
+    const result = await service.getAllAdmin(filters, pagination);
+    res.json({ status: 'success', data: result });
+  }
+
   async getById(req: Request, res: Response) {
     const product = await service.getById(req.params.id);
     res.json({ status: 'success', data: product });

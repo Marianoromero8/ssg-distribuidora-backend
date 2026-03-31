@@ -33,4 +33,8 @@ export class CategoryRepository {
   update(id: string, data: UpdateCategoryDto) {
     return Category.update(data, { where: { id } });
   }
+
+  delete(id: string) {
+    return Category.destroy({ where: { id } });
+  }
 }

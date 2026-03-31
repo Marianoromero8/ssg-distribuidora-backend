@@ -30,13 +30,17 @@ export class CategoryService {
   async update(id: string, data: UpdateCategoryDto) {
     const category = await repo.findById(id);
     if (!category) throw new NotFoundError('Category');
-
     if (data.parentCategoryId) {
       const parent = await repo.findById(data.parentCategoryId);
       if (!parent) throw new NotFoundError('Parent category');
     }
-
     await repo.update(id, data);
     return repo.findById(id);
+  }
+
+  async delete(id: string) {
+    const category = await repo.findById(id);
+    if (!category) throw new NotFoundError('Category');
+    await repo.delete(id);
   }
 }

@@ -15,5 +15,6 @@ router.get('/:id', ctrl.getById.bind(ctrl));
 
 router.post('/', authenticate, authorize(Role.ADMIN), validate(createCategorySchema), ctrl.create.bind(ctrl));
 router.put('/:id', authenticate, authorize(Role.ADMIN), validate(updateCategorySchema), ctrl.update.bind(ctrl));
+router.delete('/:id', authenticate, authorize(Role.ADMIN), ctrl.delete.bind(ctrl));
 
 export default router;

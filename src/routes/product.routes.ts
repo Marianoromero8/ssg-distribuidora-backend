@@ -11,6 +11,7 @@ const router = Router();
 const ctrl = new ProductController();
 
 router.get('/', ctrl.getAll.bind(ctrl));
+router.get('/admin', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.getAllAdmin.bind(ctrl));
 router.get('/:id', ctrl.getById.bind(ctrl));
 
 router.post('/', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), validate(createProductSchema), ctrl.create.bind(ctrl));
