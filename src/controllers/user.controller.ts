@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
+import { UserScheduleService } from '../services/userSchedule.service';
 
 const service = new UserService();
+const scheduleService = new UserScheduleService();
 
 export class UserController {
   async getAll(_req: Request, res: Response) {
@@ -22,5 +24,25 @@ export class UserController {
   async updateStatus(req: Request, res: Response) {
     const result = await service.updateStatus(req.params.id, req.body.isActive);
     res.json({ status: 'success', data: result });
+  }
+
+  async delete(req: Request, res: Response) {
+    await service.delete(req.params.id);
+    res.status(204).send();
+  }
+
+  async getSchedule(req: Request, res: Response) {
+    const schedules = await scheduleService.getByUser(req.params.id);
+    res.json({ status: 'success', data: schedules });
+  }
+
+  async addSchedule(req: Request, res: Response) {
+    const schedule = await scheduleService.create(req.params.id, req.body);
+    res.status(201).json({ status: 'success', data: schedule });
+  }
+
+  async removeSchedule(req: Request, res: Response) {
+    await scheduleService.delete(req.params.id, req.params.scheduleId);
+    res.status(204).send();
   }
 }

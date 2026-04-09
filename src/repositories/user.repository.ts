@@ -34,4 +34,8 @@ export class UserRepository {
   updateStatus(id: string, isActive: boolean) {
     return User.update({ isActive }, { where: { id } });
   }
+
+  delete(id: string) {
+    return User.destroy({ where: { id } });
+  }
 }
