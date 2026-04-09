@@ -35,4 +35,10 @@ export class UserService {
     await repo.updateStatus(id, isActive);
     return { id, isActive };
   }
+
+  async delete(id: string) {
+    const user = await repo.findById(id);
+    if (!user) throw new NotFoundError('User');
+    await repo.delete(id);
+  }
 }
