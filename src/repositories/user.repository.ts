@@ -35,6 +35,14 @@ export class UserRepository {
     return User.update({ isActive }, { where: { id } });
   }
 
+  updateRole(id: string, role: Role) {
+    return User.update({ role }, { where: { id } });
+  }
+
+  updateData(id: string, data: Partial<{ name: string; lastname: string; email: string; phone: string | null; documentType: string | null; documentNumber: string | null }>) {
+    return User.update(data, { where: { id } });
+  }
+
   delete(id: string) {
     return User.destroy({ where: { id } });
   }
