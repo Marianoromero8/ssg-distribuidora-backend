@@ -26,6 +26,16 @@ export class UserController {
     res.json({ status: 'success', data: result });
   }
 
+  async updateData(req: Request, res: Response) {
+    const result = await service.updateData(req.params.id, req.body);
+    res.json({ status: 'success', data: result });
+  }
+
+  async updateRole(req: Request, res: Response) {
+    const result = await service.updateRole(req.params.id, req.body.role);
+    res.json({ status: 'success', data: result });
+  }
+
   async delete(req: Request, res: Response) {
     await service.delete(req.params.id);
     res.status(204).send();

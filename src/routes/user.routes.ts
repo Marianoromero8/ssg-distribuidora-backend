@@ -3,7 +3,7 @@ import { UserController } from '../controllers/user.controller';
 import { authenticate } from '../middlewares/authenticate';
 import { authorize } from '../middlewares/authorize';
 import { validate } from '../middlewares/validate';
-import { createUserSchema, updateUserStatusSchema } from '../types/user.types';
+import { createUserSchema, updateUserSchema, updateUserStatusSchema, updateUserRoleSchema } from '../types/user.types';
 import { createScheduleSchema, deleteScheduleSchema } from '../types/userSchedule.types';
 import { Role } from '../shared/types/enums';
 
@@ -15,7 +15,9 @@ router.use(authenticate, authorize(Role.ADMIN));
 router.get('/', ctrl.getAll.bind(ctrl));
 router.get('/:id', ctrl.getById.bind(ctrl));
 router.post('/', validate(createUserSchema), ctrl.create.bind(ctrl));
+router.patch('/:id', validate(updateUserSchema), ctrl.updateData.bind(ctrl));
 router.patch('/:id/status', validate(updateUserStatusSchema), ctrl.updateStatus.bind(ctrl));
+router.patch('/:id/role', validate(updateUserRoleSchema), ctrl.updateRole.bind(ctrl));
 router.delete('/:id', ctrl.delete.bind(ctrl));
 
 // User schedule (zones per day)
