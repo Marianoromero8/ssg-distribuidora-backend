@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 import { UserScheduleService } from '../services/userSchedule.service';
+import { DocumentType } from '../shared/types/enums';
 
 const service = new UserService();
 const scheduleService = new UserScheduleService();
@@ -27,7 +28,15 @@ export class UserController {
   }
 
   async updateData(req: Request, res: Response) {
-    const result = await service.updateData(req.params.id, req.body);
+    const { name, lastname, email, phone, documentType, documentNumber } = req.body;
+    const result = await service.updateData(req.params.id, {
+      ...(name !== undefined && { name }),
+      ...(lastname !== undefined && { lastname }),
+      ...(email !== undefined && { email }),
+      ...(phone !== undefined && { phone }),
+      ...(documentType !== undefined && { documentType: documentType as DocumentType | null }),
+      ...(documentNumber !== undefined && { documentNumber }),
+    });
     res.json({ status: 'success', data: result });
   }
 

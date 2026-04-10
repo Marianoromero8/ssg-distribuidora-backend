@@ -1,6 +1,6 @@
 import { User } from '../models/user.model';
 import { CreateUserDto } from '../types/user.types';
-import { Role } from '../shared/types/enums';
+import { Role, DocumentType } from '../shared/types/enums';
 
 export class UserRepository {
   findAll() {
@@ -39,7 +39,7 @@ export class UserRepository {
     return User.update({ role }, { where: { id } });
   }
 
-  updateData(id: string, data: Partial<{ name: string; lastname: string; email: string; phone: string | null; documentType: string | null; documentNumber: string | null }>) {
+  updateData(id: string, data: Partial<{ name: string; lastname: string; email: string; phone: string | null; documentType: DocumentType | null; documentNumber: string | null }>) {
     return User.update(data, { where: { id } });
   }
 

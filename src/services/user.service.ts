@@ -3,7 +3,7 @@ import { CreateUserDto } from '../types/user.types';
 import { hashPassword } from '../shared/utils/hash';
 import { AppError } from '../shared/errors/AppError';
 import { NotFoundError } from '../shared/errors/NotFoundError';
-import { Role } from '../shared/types/enums';
+import { Role, DocumentType } from '../shared/types/enums';
 
 const repo = new UserRepository();
 
@@ -37,7 +37,7 @@ export class UserService {
     return { id, isActive };
   }
 
-  async updateData(id: string, data: Partial<{ name: string; lastname: string; email: string; phone: string | null; documentType: string | null; documentNumber: string | null }>) {
+  async updateData(id: string, data: Partial<{ name: string; lastname: string; email: string; phone: string | null; documentType: DocumentType | null; documentNumber: string | null }>) {
     const user = await repo.findById(id);
     if (!user) throw new NotFoundError('User');
     if (data.email) {
