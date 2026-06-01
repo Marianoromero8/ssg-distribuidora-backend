@@ -13,8 +13,10 @@ interface ProductAttributes {
   contentUnit: ContentUnit;
   packQuantity: number;
   stock: number;
+  pfStock: number;
   available: boolean;
   isFeatured: boolean;
+  isPuntoFiesta: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -22,7 +24,7 @@ interface ProductAttributes {
 interface ProductCreationAttributes
   extends Optional<
     ProductAttributes,
-    'id' | 'productImage' | 'stock' | 'available' | 'isFeatured'
+    'id' | 'productImage' | 'stock' | 'pfStock' | 'available' | 'isFeatured' | 'isPuntoFiesta'
   > {}
 
 export class Product
@@ -39,8 +41,10 @@ export class Product
   declare contentUnit: ContentUnit;
   declare packQuantity: number;
   declare stock: number;
+  declare pfStock: number;
   declare available: boolean;
   declare isFeatured: boolean;
+  declare isPuntoFiesta: boolean;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -89,12 +93,22 @@ Product.init(
       allowNull: false,
       defaultValue: 0,
     },
+    pfStock: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     available: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
     },
     isFeatured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    isPuntoFiesta: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,

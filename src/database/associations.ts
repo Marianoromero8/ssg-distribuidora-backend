@@ -5,6 +5,8 @@ import { Promotion } from '../models/promotion.model';
 import { User } from '../models/user.model';
 import { Zone } from '../models/zone.model';
 import { UserSchedule } from '../models/userSchedule.model';
+import { PFOrder } from '../models/pfOrder.model';
+import { PFOrderItem } from '../models/pfOrderItem.model';
 
 export function registerAssociations(): void {
   // Brand → Product
@@ -30,4 +32,12 @@ export function registerAssociations(): void {
   // Zone → UserSchedule
   Zone.hasMany(UserSchedule, { foreignKey: 'zoneId', as: 'schedules' });
   UserSchedule.belongsTo(Zone, { foreignKey: 'zoneId', as: 'zone' });
+
+  // PFOrder → PFOrderItem
+  PFOrder.hasMany(PFOrderItem, { foreignKey: 'orderId', as: 'items' });
+  PFOrderItem.belongsTo(PFOrder, { foreignKey: 'orderId', as: 'order' });
+
+  // PFOrderItem → Product
+  PFOrderItem.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+  Product.hasMany(PFOrderItem, { foreignKey: 'productId', as: 'pfOrderItems' });
 }

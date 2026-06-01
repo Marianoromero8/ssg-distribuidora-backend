@@ -13,7 +13,7 @@ const categoryRepo = new CategoryRepository();
 
 export class ProductService {
   async getAll(
-    filters: { categoryId?: string; brandId?: string; isFeatured?: boolean },
+    filters: { categoryId?: string; brandId?: string; isFeatured?: boolean; isPuntoFiesta?: boolean },
     pagination: PaginationOptions
   ) {
     const result = await repo.findAll(filters, pagination);
@@ -21,7 +21,7 @@ export class ProductService {
   }
 
   async getAllAdmin(
-    filters: { categoryId?: string; brandId?: string; isFeatured?: boolean; available?: boolean },
+    filters: { categoryId?: string; brandId?: string; isFeatured?: boolean; available?: boolean; isPuntoFiesta?: boolean },
     pagination: PaginationOptions
   ) {
     const result = await repo.findAllAdmin(filters, pagination);

@@ -13,6 +13,8 @@ import promotionRoutes from "./routes/promotion.routes";
 import bannerRoutes from "./routes/banner.routes";
 import zoneRoutes from "./routes/zone.routes";
 import announcementRoutes from "./routes/announcement.routes";
+import pfOrderRoutes from "./routes/pfOrder.routes";
+import pfProductRoutes from "./routes/pfProduct.routes";
 import { errorHandler } from "./middlewares/errorHandler";
 import { env } from "./config/env";
 
@@ -45,6 +47,8 @@ app.use("/api/v1/promotions", promotionRoutes);
 app.use("/api/v1/banners", bannerRoutes);
 app.use("/api/v1/zones", zoneRoutes);
 app.use("/api/v1/announcements", announcementRoutes);
+app.use("/api/v1/punto-fiesta/orders", pfOrderRoutes);
+app.use("/api/v1/punto-fiesta/products", pfProductRoutes);
 
 app.use(errorHandler);
 
