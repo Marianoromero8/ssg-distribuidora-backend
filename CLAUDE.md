@@ -13,6 +13,10 @@ npm run dev          # Start dev server with hot reload (ts-node-dev)
 npm run build        # Compile TypeScript to dist/
 npm start            # Run compiled output
 
+npm run lint         # ESLint check (eslint src)
+npm run lint:fix     # ESLint auto-fix
+npm run format       # Prettier format src/
+
 npm run db:migrate   # Run pending migrations
 npm run db:migrate:undo  # Rollback last migration
 npm run db:seed      # Run all seeders
@@ -20,6 +24,8 @@ npm run db:seed      # Run all seeders
 npm test             # Run all tests
 npm run test:watch   # Watch mode
 ```
+
+> The PostToolUse hook runs Prettier + ESLint fix automatically on every file Claude writes or edits. Config: `eslint.config.js` (flat config, ESLint 10), `.prettierrc` (single quotes).
 
 ## Architecture
 

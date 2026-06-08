@@ -1,6 +1,6 @@
 import { PFOrder } from '../models/pfOrder.model';
 import { PFOrderItem } from '../models/pfOrderItem.model';
-import { Product } from '../models/product.model';
+import { PFProduct } from '../models/pfProduct.model';
 import { PFOrderStatus } from '../shared/types/enums';
 import { PaginationOptions } from '../shared/utils/pagination';
 import { sequelize } from '../config/database';
@@ -9,7 +9,7 @@ const ITEM_INCLUDE = [
   {
     model: PFOrderItem,
     as: 'items',
-    include: [{ model: Product, as: 'product' }],
+    include: [{ model: PFProduct, as: 'product' }],
   },
 ];
 
@@ -32,7 +32,16 @@ export class PFOrderRepository {
   }
 
   async create(
-    orderData: { clientName: string; clientEmail: string; clientPhone: string; total: number },
+    orderData: {
+      clientName: string;
+      clientSurname: string;
+      clientEmail: string;
+      clientPhone: string;
+      clientDni: string;
+      clientCuil: string;
+      clientAddress: string;
+      total: number;
+    },
     items: { productId: string; quantity: number; unitPrice: number }[]
   ) {
     return sequelize.transaction(async (t) => {
@@ -42,7 +51,7 @@ export class PFOrderRepository {
         { transaction: t }
       );
       for (const item of items) {
-        await Product.decrement('pfStock', { by: item.quantity, where: { id: item.productId }, transaction: t });
+        await PFProduct.decrement('stock', { by: item.quantity, where: { id: item.productId }, transaction: t });
       }
       return order;
     });
@@ -51,7 +60,7 @@ export class PFOrderRepository {
   async restoreStock(orderId: string) {
     const items = await PFOrderItem.findAll({ where: { orderId } });
     for (const item of items) {
-      await Product.increment('pfStock', { by: item.quantity, where: { id: item.productId } });
+      await PFProduct.increment('stock', { by: item.quantity, where: { id: item.productId } });
     }
   }
 

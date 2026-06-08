@@ -5,8 +5,12 @@ import { PFOrderStatus } from '../shared/types/enums';
 interface PFOrderAttributes {
   id: string;
   clientName: string;
+  clientSurname: string;
   clientEmail: string;
   clientPhone: string;
+  clientDni: string;
+  clientCuil: string;
+  clientAddress: string;
   total: number;
   status: PFOrderStatus;
   note: string | null;
@@ -14,7 +18,8 @@ interface PFOrderAttributes {
   updatedAt?: Date;
 }
 
-interface PFOrderCreationAttributes extends Optional<PFOrderAttributes, 'id' | 'note' | 'status'> {}
+interface PFOrderCreationAttributes
+  extends Optional<PFOrderAttributes, 'id' | 'note' | 'status'> {}
 
 export class PFOrder
   extends Model<PFOrderAttributes, PFOrderCreationAttributes>
@@ -22,8 +27,12 @@ export class PFOrder
 {
   declare id: string;
   declare clientName: string;
+  declare clientSurname: string;
   declare clientEmail: string;
   declare clientPhone: string;
+  declare clientDni: string;
+  declare clientCuil: string;
+  declare clientAddress: string;
   declare total: number;
   declare status: PFOrderStatus;
   declare note: string | null;
@@ -42,12 +51,28 @@ PFOrder.init(
       type: DataTypes.STRING(200),
       allowNull: false,
     },
+    clientSurname: {
+      type: DataTypes.STRING(200),
+      allowNull: false,
+    },
     clientEmail: {
       type: DataTypes.STRING(200),
       allowNull: false,
     },
     clientPhone: {
       type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    clientDni: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    clientCuil: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    clientAddress: {
+      type: DataTypes.STRING(300),
       allowNull: false,
     },
     total: {

@@ -4,8 +4,12 @@ import { PFOrderStatus } from '../shared/types/enums';
 export const createPFOrderSchema = z.object({
   body: z.object({
     clientName: z.string().min(1).max(200),
+    clientSurname: z.string().min(1).max(200),
     clientEmail: z.string().email(),
     clientPhone: z.string().min(1).max(50),
+    clientDni: z.string().min(1).max(20),
+    clientCuil: z.string().min(1).max(20),
+    clientAddress: z.string().min(1).max(300),
     items: z
       .array(
         z.object({

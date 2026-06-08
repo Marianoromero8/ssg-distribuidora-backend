@@ -1,5 +1,5 @@
 import { PFOrderRepository } from '../repositories/pfOrder.repository';
-import { ProductRepository } from '../repositories/product.repository';
+import { PFProductRepository } from '../repositories/pfProduct.repository';
 import { CreatePFOrderDto, UpdatePFOrderStatusDto } from '../types/pfOrder.types';
 import { NotFoundError } from '../shared/errors/NotFoundError';
 import { AppError } from '../shared/errors/AppError';
@@ -7,7 +7,7 @@ import { PFOrderStatus } from '../shared/types/enums';
 import { PaginationOptions, buildPaginatedResponse } from '../shared/utils/pagination';
 
 const repo = new PFOrderRepository();
-const productRepo = new ProductRepository();
+const productRepo = new PFProductRepository();
 
 export class PFOrderService {
   async getAll(status: PFOrderStatus | undefined, pagination: PaginationOptions) {
@@ -28,8 +28,8 @@ export class PFOrderService {
     for (const item of data.items) {
       const product = await productRepo.findById(item.productId);
       if (!product) throw new NotFoundError(`Product ${item.productId}`);
-      if (!product.isPuntoFiesta) throw new AppError('Product is not available in Punto Fiesta', 400);
-      if (product.pfStock < item.quantity) throw new AppError(`Sin stock suficiente para ${product.productName}`, 400);
+      if (!product.active) throw new AppError(`Product ${product.name} is not available`, 400);
+      if (product.stock < item.quantity) throw new AppError(`Sin stock suficiente para ${product.name}`, 400);
 
       const unitPrice = Number(product.price);
       resolvedItems.push({ productId: item.productId, quantity: item.quantity, unitPrice });
@@ -39,8 +39,12 @@ export class PFOrderService {
     const order = await repo.create(
       {
         clientName: data.clientName,
+        clientSurname: data.clientSurname,
         clientEmail: data.clientEmail,
         clientPhone: data.clientPhone,
+        clientDni: data.clientDni,
+        clientCuil: data.clientCuil,
+        clientAddress: data.clientAddress,
         total,
       },
       resolvedItems
