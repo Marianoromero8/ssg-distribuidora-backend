@@ -22,6 +22,12 @@ export enum DiscountType {
   FIXED = 'FIXED',
 }
 
+export enum PFOrderStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  DECLINED = 'DECLINED',
+}
+
 export enum DayOfWeek {
   MONDAY = 'MONDAY',
   TUESDAY = 'TUESDAY',

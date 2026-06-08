@@ -12,6 +12,7 @@ export const createProductSchema = z.object({
     contentUnit: z.nativeEnum(ContentUnit),
     packQuantity: z.number().int().positive(),
     stock: z.number().int().min(0).optional(),
+    pfStock: z.number().int().min(0).optional(),
     isFeatured: z.boolean().optional(),
   }),
 });
@@ -28,8 +29,10 @@ export const updateProductSchema = z.object({
     contentUnit: z.nativeEnum(ContentUnit).optional(),
     packQuantity: z.number().int().positive().optional(),
     stock: z.number().int().min(0).optional(),
+    pfStock: z.number().int().min(0).optional(),
     available: z.boolean().optional(),
     isFeatured: z.boolean().optional(),
+    isPuntoFiesta: z.boolean().optional(),
   }),
 });
 

@@ -17,14 +17,26 @@ export class ProductController {
     res.json({ status: 'success', data: result });
   }
 
+  async getPuntoFiesta(req: Request, res: Response) {
+    const pagination = getPagination(req);
+    const filters = {
+      categoryId: req.query.categoryId as string | undefined,
+      brandId: req.query.brandId as string | undefined,
+      isPuntoFiesta: true,
+    };
+    const result = await service.getAll(filters, pagination);
+    res.json({ status: 'success', data: result });
+  }
+
   async getAllAdmin(req: Request, res: Response) {
     const pagination = getPagination(req);
-    const { categoryId, brandId, isFeatured, available } = req.query;
+    const { categoryId, brandId, isFeatured, available, isPuntoFiesta } = req.query;
     const filters = {
       categoryId: categoryId as string | undefined,
       brandId: brandId as string | undefined,
       isFeatured: isFeatured === 'true' ? true : undefined,
       available: available === 'true' ? true : available === 'false' ? false : undefined,
+      isPuntoFiesta: isPuntoFiesta === 'true' ? true : isPuntoFiesta === 'false' ? false : undefined,
     };
     const result = await service.getAllAdmin(filters, pagination);
     res.json({ status: 'success', data: result });

@@ -10,6 +10,7 @@ interface FilterOptions {
   brandId?: string;
   isFeatured?: boolean;
   available?: boolean;
+  isPuntoFiesta?: boolean;
 }
 
 const ASSOCIATIONS = [
@@ -23,6 +24,7 @@ export class ProductRepository {
     if (filters.categoryId) where.categoryId = filters.categoryId;
     if (filters.brandId) where.brandId = filters.brandId;
     if (filters.isFeatured !== undefined) where.isFeatured = filters.isFeatured;
+    if (filters.isPuntoFiesta !== undefined) where.isPuntoFiesta = filters.isPuntoFiesta;
 
     return Product.findAndCountAll({
       where,
@@ -39,6 +41,7 @@ export class ProductRepository {
     if (filters.brandId) where.brandId = filters.brandId;
     if (filters.isFeatured !== undefined) where.isFeatured = filters.isFeatured;
     if (filters.available !== undefined) where.available = filters.available;
+    if (filters.isPuntoFiesta !== undefined) where.isPuntoFiesta = filters.isPuntoFiesta;
 
     return Product.findAndCountAll({
       where,
