@@ -20,6 +20,11 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string().min(1),
   CLOUDINARY_API_SECRET: z.string().min(1),
   FRONTEND_URL: z.string().default('http://localhost:3000'),
+  PF_ALIAS: z.string().default('marianoromerocombos'),
+  PF_CBU: z.string().default('123456789101213'),
+  PF_INSTAGRAM: z.string().default('@puntofiesta'),
+  PF_FACEBOOK: z.string().default('Punto Fiesta'),
+  PF_WHATSAPP_URL: z.string().default('https://wa.me/549XXXXXXXXXX'),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -43,7 +43,7 @@ export function registerAssociations(): void {
   PFOrder.hasMany(PFOrderItem, { foreignKey: 'orderId', as: 'items' });
   PFOrderItem.belongsTo(PFOrder, { foreignKey: 'orderId', as: 'order' });
 
-  // PFOrderItem → PFProduct
-  PFOrderItem.belongsTo(PFProduct, { foreignKey: 'productId', as: 'product' });
-  PFProduct.hasMany(PFOrderItem, { foreignKey: 'productId', as: 'orderItems' });
+  // PFOrderItem → PFProduct (constraints: false — FK is managed manually in DB)
+  PFOrderItem.belongsTo(PFProduct, { foreignKey: 'productId', as: 'product', constraints: false });
+  PFProduct.hasMany(PFOrderItem, { foreignKey: 'productId', as: 'orderItems', constraints: false });
 }

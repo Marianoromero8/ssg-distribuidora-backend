@@ -24,8 +24,9 @@ export const createPFOrderSchema = z.object({
 export const updatePFOrderStatusSchema = z.object({
   params: z.object({ id: z.string().uuid() }),
   body: z.object({
-    status: z.enum([PFOrderStatus.ACCEPTED, PFOrderStatus.DECLINED]),
+    status: z.enum([PFOrderStatus.ACCEPTED, PFOrderStatus.DECLINED, PFOrderStatus.PAID]),
     note: z.string().optional(),
+    confirmedItemIds: z.array(z.string().uuid()).optional(),
   }),
 });
 

@@ -26,6 +26,7 @@ export enum PFOrderStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
   DECLINED = 'DECLINED',
+  PAID = 'PAID',
 }
 
 export enum DayOfWeek {
