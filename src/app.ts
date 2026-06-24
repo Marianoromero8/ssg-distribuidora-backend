@@ -21,7 +21,7 @@ import { env } from "./config/env";
 
 const app = express();
 
-const allowedOrigins = [env.FRONTEND_URL, "http://localhost:3000", "http://localhost:3002", "http://localhost:3003"];
+const allowedOrigins = [env.FRONTEND_URL, "http://localhost:3000", "http://localhost:3002", "http://localhost:3003", "https://admin-distribuidora.vercel.app"];
 
 app.use(helmet());
 app.use(
