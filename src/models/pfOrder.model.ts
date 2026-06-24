@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
 import { PFOrderStatus } from '../shared/types/enums';
+import type { PFOrderItem } from './pfOrderItem.model';
 
 interface PFOrderAttributes {
   id: string;
@@ -18,8 +19,7 @@ interface PFOrderAttributes {
   updatedAt?: Date;
 }
 
-interface PFOrderCreationAttributes
-  extends Optional<PFOrderAttributes, 'id' | 'note' | 'status'> {}
+interface PFOrderCreationAttributes extends Optional<PFOrderAttributes, 'id' | 'note' | 'status'> {}
 
 export class PFOrder
   extends Model<PFOrderAttributes, PFOrderCreationAttributes>
@@ -38,6 +38,7 @@ export class PFOrder
   declare note: string | null;
   declare createdAt: Date;
   declare updatedAt: Date;
+  declare items?: PFOrderItem[];
 }
 
 PFOrder.init(
@@ -54,26 +55,32 @@ PFOrder.init(
     clientSurname: {
       type: DataTypes.STRING(200),
       allowNull: false,
+      defaultValue: '',
     },
     clientEmail: {
       type: DataTypes.STRING(200),
       allowNull: false,
+      defaultValue: '',
     },
     clientPhone: {
       type: DataTypes.STRING(50),
       allowNull: false,
+      defaultValue: '',
     },
     clientDni: {
       type: DataTypes.STRING(20),
       allowNull: false,
+      defaultValue: '',
     },
     clientCuil: {
       type: DataTypes.STRING(20),
       allowNull: false,
+      defaultValue: '',
     },
     clientAddress: {
       type: DataTypes.STRING(300),
       allowNull: false,
+      defaultValue: '',
     },
     total: {
       type: DataTypes.DECIMAL(10, 2),

@@ -14,6 +14,7 @@ router.post('/', validate(createPFOrderSchema), ctrl.create.bind(ctrl));
 
 // Dashboard — admin/employee manages orders
 router.get('/', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.getAll.bind(ctrl));
+router.get('/stats', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.getStats.bind(ctrl));
 router.get('/:id', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.getById.bind(ctrl));
 router.patch(
   '/:id/status',

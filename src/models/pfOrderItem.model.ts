@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
+import type { PFProduct } from './pfProduct.model';
 
 interface PFOrderItemAttributes {
   id: string;
@@ -24,6 +25,7 @@ export class PFOrderItem
   declare unitPrice: number;
   declare createdAt: Date;
   declare updatedAt: Date;
+  declare product?: PFProduct;
 }
 
 PFOrderItem.init(
