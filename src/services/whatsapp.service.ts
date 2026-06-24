@@ -30,7 +30,10 @@ class WhatsAppService {
       console.warn('[WA] Desconectado:', reason);
     });
 
-    this.client.initialize();
+    this.client.initialize().catch((err: Error) => {
+      console.error('[WA] No se pudo inicializar WhatsApp:', err.message);
+      console.warn('[WA] El servidor seguirá funcionando sin WhatsApp.');
+    });
   }
 
   async sendMessage(phone: string, message: string): Promise<void> {
