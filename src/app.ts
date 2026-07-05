@@ -17,6 +17,7 @@ import pfOrderRoutes from './routes/pfOrder.routes';
 import pfProductRoutes from './routes/pfProduct.routes';
 import pfCategoryRoutes from './routes/pfCategory.routes';
 import pfAnnouncementRoutes from './routes/pfAnnouncement.routes';
+import pfSettingsRoutes from './routes/pfSettings.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { env } from './config/env';
 
@@ -59,6 +60,7 @@ app.use('/api/v1/punto-fiesta/orders', pfOrderRoutes);
 app.use('/api/v1/punto-fiesta/products', pfProductRoutes);
 app.use('/api/v1/punto-fiesta/categories', pfCategoryRoutes);
 app.use('/api/v1/punto-fiesta/announcements', pfAnnouncementRoutes);
+app.use('/api/v1/punto-fiesta/settings', pfSettingsRoutes);
 
 app.use(errorHandler);
 

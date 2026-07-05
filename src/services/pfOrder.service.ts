@@ -7,9 +7,11 @@ import { PFOrderStatus } from '../shared/types/enums';
 import { PaginationOptions, buildPaginatedResponse } from '../shared/utils/pagination';
 import { whatsappService } from './whatsapp.service';
 import { buildAcceptedMessage, buildDeclinedMessage } from '../utils/pfMessages';
+import { PFSettingsRepository } from '../repositories/pfSettings.repository';
 
 const repo = new PFOrderRepository();
 const productRepo = new PFProductRepository();
+const settingsRepo = new PFSettingsRepository();
 
 export class PFOrderService {
   async getAll(filters: OrderFilters, pagination: PaginationOptions) {
@@ -101,7 +103,12 @@ export class PFOrderService {
             (sum, i) => sum + Number(i.unitPrice) * i.quantity,
             0
           );
-          const msg = buildAcceptedMessage(order, confirmedItems, total);
+          const settings = await settingsRepo.get();
+          const msg = buildAcceptedMessage(order, confirmedItems, total, {
+            alias: settings.alias,
+            cbu: settings.cbu,
+            accountHolderName: settings.accountHolderName,
+          });
           await whatsappService.sendMessage(order.clientPhone, msg);
         } else if (data.status === PFOrderStatus.DECLINED) {
           const msg = buildDeclinedMessage(order);

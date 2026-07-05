@@ -17,7 +17,8 @@ function fmt(n: number) {
 export function buildAcceptedMessage(
   order: OrderInfo,
   confirmedItems: ItemInfo[],
-  total: number
+  total: number,
+  paymentInfo: { alias: string; cbu: string; accountHolderName: string }
 ): string {
   const itemsList = confirmedItems
     .map((i) => `• ${i.product?.name ?? 'Producto'} x${i.quantity} — $${fmt(Number(i.unitPrice))}`)
@@ -28,8 +29,9 @@ export function buildAcceptedMessage(
     `Productos confirmados:\n${itemsList}\n\n` +
     `Total: $${fmt(total)}\n\n` +
     `Para completar tu pedido, realizá la transferencia a:\n` +
-    `• Alias: ${env.PF_ALIAS}\n` +
-    `• CBU: ${env.PF_CBU}\n\n` +
+    `• Alias: ${paymentInfo.alias}\n` +
+    `• CBU: ${paymentInfo.cbu}\n` +
+    `• Titular: ${paymentInfo.accountHolderName}\n\n` +
     `Una vez hecha la transferencia, envianos el comprobante por este chat. ¡Gracias!`
   );
 }
