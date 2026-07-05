@@ -4,6 +4,9 @@ import qrcode from 'qrcode-terminal';
 class WhatsAppService {
   private client!: Client;
   private isReady = false;
+  private lastReadyAt: Date | null = null;
+  private lastDisconnectedAt: Date | null = null;
+  private lastDisconnectReason: string | null = null;
 
   initialize() {
     this.client = new Client({
@@ -18,6 +21,7 @@ class WhatsAppService {
 
     this.client.on('ready', () => {
       this.isReady = true;
+      this.lastReadyAt = new Date();
       console.log('[WA] Cliente listo');
     });
 
@@ -27,6 +31,8 @@ class WhatsAppService {
 
     this.client.on('disconnected', (reason) => {
       this.isReady = false;
+      this.lastDisconnectedAt = new Date();
+      this.lastDisconnectReason = String(reason);
       console.warn('[WA] Desconectado:', reason);
     });
 
@@ -36,18 +42,33 @@ class WhatsAppService {
     });
   }
 
-  async sendMessage(phone: string, message: string): Promise<void> {
+  async sendMessage(phone: string, message: string): Promise<boolean> {
     if (!this.isReady) {
       console.warn('[WA] Cliente no listo — mensaje no enviado a', phone);
-      return;
+      return false;
     }
     const chatId = `549${phone.replace(/\D/g, '')}@c.us`;
-    await this.client.sendMessage(chatId, message);
-    console.log('[WA] Mensaje enviado a', chatId);
+    try {
+      await this.client.sendMessage(chatId, message);
+      console.log('[WA] Mensaje enviado a', chatId);
+      return true;
+    } catch (err) {
+      console.error('[WA] Error al enviar mensaje a', chatId, err);
+      return false;
+    }
   }
 
   get ready() {
     return this.isReady;
+  }
+
+  getStatus() {
+    return {
+      ready: this.isReady,
+      lastReadyAt: this.lastReadyAt,
+      lastDisconnectedAt: this.lastDisconnectedAt,
+      lastDisconnectReason: this.lastDisconnectReason,
+    };
   }
 }
 

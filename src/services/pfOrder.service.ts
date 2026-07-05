@@ -109,12 +109,11 @@ export class PFOrderService {
             cbu: settings.cbu,
             accountHolderName: settings.accountHolderName,
           });
-          await whatsappService.sendMessage(order.clientPhone, msg);
+          whatsappSent = await whatsappService.sendMessage(order.clientPhone, msg);
         } else if (data.status === PFOrderStatus.DECLINED) {
           const msg = buildDeclinedMessage(order);
-          await whatsappService.sendMessage(order.clientPhone, msg);
+          whatsappSent = await whatsappService.sendMessage(order.clientPhone, msg);
         }
-        whatsappSent = true;
       } catch (e) {
         console.error('[WA] Error al enviar mensaje:', e);
       }

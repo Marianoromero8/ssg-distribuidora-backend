@@ -18,6 +18,7 @@ import pfProductRoutes from './routes/pfProduct.routes';
 import pfCategoryRoutes from './routes/pfCategory.routes';
 import pfAnnouncementRoutes from './routes/pfAnnouncement.routes';
 import pfSettingsRoutes from './routes/pfSettings.routes';
+import whatsappStatusRoutes from './routes/whatsappStatus.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { env } from './config/env';
 
@@ -61,6 +62,7 @@ app.use('/api/v1/punto-fiesta/products', pfProductRoutes);
 app.use('/api/v1/punto-fiesta/categories', pfCategoryRoutes);
 app.use('/api/v1/punto-fiesta/announcements', pfAnnouncementRoutes);
 app.use('/api/v1/punto-fiesta/settings', pfSettingsRoutes);
+app.use('/api/v1/punto-fiesta/whatsapp/status', whatsappStatusRoutes);
 
 app.use(errorHandler);
 
