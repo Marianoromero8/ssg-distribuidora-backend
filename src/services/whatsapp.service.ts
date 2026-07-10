@@ -14,7 +14,18 @@ class WhatsAppService {
   initialize() {
     this.client = new Client({
       authStrategy: new LocalAuth({ dataPath: './.wwebjs_auth' }),
-      puppeteer: { args: ['--no-sandbox', '--disable-setuid-sandbox'] },
+      puppeteer: {
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process',
+        ],
+      },
     });
 
     this.client.on('qr', (qr) => {
