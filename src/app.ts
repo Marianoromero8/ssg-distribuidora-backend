@@ -30,6 +30,9 @@ const allowedOrigins = [
   'http://localhost:3002',
   'http://localhost:3003',
   'https://admin-distribuidora.vercel.app',
+  'https://puntofiesta.vercel.app',
+  'https://puntofiestabahia.com',
+  'https://www.puntofiestabahia.com',
 ];
 
 app.use(helmet());
