@@ -1,5 +1,7 @@
 import { Client, LocalAuth } from 'whatsapp-web.js';
-import qrcode from 'qrcode-terminal';
+import qrcodeTerminal from 'qrcode-terminal';
+import qrcode from 'qrcode';
+import { AppError } from '../shared/errors/AppError';
 
 class WhatsAppService {
   private client!: Client;
@@ -7,6 +9,7 @@ class WhatsAppService {
   private lastReadyAt: Date | null = null;
   private lastDisconnectedAt: Date | null = null;
   private lastDisconnectReason: string | null = null;
+  private latestQr: string | null = null;
 
   initialize() {
     this.client = new Client({
@@ -16,12 +19,21 @@ class WhatsAppService {
 
     this.client.on('qr', (qr) => {
       console.log('\n[WA] Escanea este QR con el teléfono de la empresa:\n');
-      qrcode.generate(qr, { small: true });
+      qrcodeTerminal.generate(qr, { small: true });
+      qrcode
+        .toDataURL(qr)
+        .then((dataUrl) => {
+          this.latestQr = dataUrl;
+        })
+        .catch((err: Error) => {
+          console.error('[WA] No se pudo generar el QR como imagen:', err.message);
+        });
     });
 
     this.client.on('ready', () => {
       this.isReady = true;
       this.lastReadyAt = new Date();
+      this.latestQr = null;
       console.log('[WA] Cliente listo');
     });
 
@@ -40,6 +52,19 @@ class WhatsAppService {
       console.error('[WA] No se pudo inicializar WhatsApp:', err.message);
       console.warn('[WA] El servidor seguirá funcionando sin WhatsApp.');
     });
+  }
+
+  async reconnect() {
+    if (this.isReady) {
+      throw new AppError('WhatsApp ya está conectado', 409);
+    }
+    this.latestQr = null;
+    try {
+      await this.client?.destroy();
+    } catch (err) {
+      console.warn('[WA] Error al cerrar el cliente anterior:', (err as Error).message);
+    }
+    this.initialize();
   }
 
   async sendMessage(phone: string, message: string): Promise<boolean> {
@@ -69,6 +94,10 @@ class WhatsAppService {
       lastDisconnectedAt: this.lastDisconnectedAt,
       lastDisconnectReason: this.lastDisconnectReason,
     };
+  }
+
+  getQr() {
+    return this.latestQr;
   }
 }
 
