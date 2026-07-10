@@ -62,7 +62,7 @@ app.use('/api/v1/punto-fiesta/products', pfProductRoutes);
 app.use('/api/v1/punto-fiesta/categories', pfCategoryRoutes);
 app.use('/api/v1/punto-fiesta/announcements', pfAnnouncementRoutes);
 app.use('/api/v1/punto-fiesta/settings', pfSettingsRoutes);
-app.use('/api/v1/punto-fiesta/whatsapp/status', whatsappStatusRoutes);
+app.use('/api/v1/punto-fiesta/whatsapp', whatsappStatusRoutes);
 
 app.use(errorHandler);
 
