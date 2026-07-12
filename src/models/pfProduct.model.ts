@@ -3,6 +3,7 @@ import { sequelize } from '../config/database';
 
 interface PFProductAttributes {
   id: string;
+  code: string | null;
   name: string;
   description: string | null;
   price: number;
@@ -14,14 +15,17 @@ interface PFProductAttributes {
   updatedAt?: Date;
 }
 
-interface PFProductCreationAttributes
-  extends Optional<PFProductAttributes, 'id' | 'description' | 'imageUrl' | 'stock' | 'active'> {}
+interface PFProductCreationAttributes extends Optional<
+  PFProductAttributes,
+  'id' | 'code' | 'description' | 'imageUrl' | 'stock' | 'active'
+> {}
 
 export class PFProduct
   extends Model<PFProductAttributes, PFProductCreationAttributes>
   implements PFProductAttributes
 {
   declare id: string;
+  declare code: string | null;
   declare name: string;
   declare description: string | null;
   declare price: number;
@@ -39,6 +43,11 @@ PFProduct.init(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+    },
+    code: {
+      type: DataTypes.STRING(4),
+      allowNull: true,
+      unique: true,
     },
     name: {
       type: DataTypes.STRING(200),

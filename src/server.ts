@@ -2,6 +2,7 @@ import { env } from './config/env';
 import { sequelize, connectDB } from './config/database';
 import { registerAssociations } from './database/associations';
 import { whatsappService } from './services/whatsapp.service';
+import { PFProductRepository } from './repositories/pfProduct.repository';
 import app from './app';
 
 async function bootstrap() {
@@ -10,6 +11,8 @@ async function bootstrap() {
 
   await sequelize.sync({ alter: true });
   console.log('Database synced.');
+
+  await new PFProductRepository().backfillMissingCodes();
 
   whatsappService.initialize();
 
