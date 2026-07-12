@@ -2,6 +2,10 @@ import { z } from 'zod';
 
 export const createPFProductSchema = z.object({
   body: z.object({
+    code: z
+      .string()
+      .regex(/^\d{4}$/)
+      .optional(),
     name: z.string().min(1).max(200),
     description: z.string().optional().nullable(),
     price: z.number().positive(),
@@ -13,6 +17,10 @@ export const createPFProductSchema = z.object({
 export const updatePFProductSchema = z.object({
   params: z.object({ id: z.string().uuid() }),
   body: z.object({
+    code: z
+      .string()
+      .regex(/^\d{4}$/)
+      .optional(),
     name: z.string().min(1).max(200).optional(),
     description: z.string().optional().nullable(),
     price: z.number().positive().optional(),
