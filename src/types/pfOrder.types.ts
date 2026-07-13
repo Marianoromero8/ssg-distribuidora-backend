@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PFOrderStatus } from '../shared/types/enums';
+import { PFOrderStatus, PFDeliveryMethod } from '../shared/types/enums';
 
 export const createPFOrderSchema = z.object({
   body: z.object({
@@ -10,6 +10,7 @@ export const createPFOrderSchema = z.object({
     clientDni: z.string().min(1).max(20),
     clientCuil: z.string().min(1).max(20),
     clientAddress: z.string().min(1).max(300),
+    deliveryMethod: z.nativeEnum(PFDeliveryMethod),
     items: z
       .array(
         z.object({

@@ -50,6 +50,7 @@ export class PFOrderService {
         clientDni: data.clientDni,
         clientCuil: data.clientCuil,
         clientAddress: data.clientAddress,
+        deliveryMethod: data.deliveryMethod,
         total,
       },
       resolvedItems
@@ -104,11 +105,17 @@ export class PFOrderService {
             0
           );
           const settings = await settingsRepo.get();
-          const msg = buildAcceptedMessage(order, confirmedItems, total, {
-            alias: settings.alias,
-            cbu: settings.cbu,
-            accountHolderName: settings.accountHolderName,
-          });
+          const msg = buildAcceptedMessage(
+            order,
+            confirmedItems,
+            total,
+            {
+              alias: settings.alias,
+              cbu: settings.cbu,
+              accountHolderName: settings.accountHolderName,
+            },
+            settings.address
+          );
           whatsappSent = await whatsappService.sendMessage(order.clientPhone, msg);
         } else if (data.status === PFOrderStatus.DECLINED) {
           const msg = buildDeclinedMessage(order);

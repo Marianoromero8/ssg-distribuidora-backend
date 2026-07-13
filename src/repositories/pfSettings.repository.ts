@@ -12,6 +12,10 @@ export class PFSettingsRepository {
         alias: env.PF_ALIAS,
         cbu: env.PF_CBU,
         phone: '',
+        address: '',
+        instagramUrl: 'https://www.instagram.com/puntofiestabahia/',
+        facebookUrl: 'https://www.facebook.com/profile.php?id=61591284386961',
+        whatsappUrl: env.PF_WHATSAPP_URL,
       },
     });
     return settings;

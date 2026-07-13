@@ -8,6 +8,16 @@ export class PFSettingsService {
     return repo.get();
   }
 
+  async getPublicSettings() {
+    const settings = await repo.get();
+    return {
+      address: settings.address,
+      instagramUrl: settings.instagramUrl,
+      facebookUrl: settings.facebookUrl,
+      whatsappUrl: settings.whatsappUrl,
+    };
+  }
+
   async updateSettings(data: UpdatePFSettingsDto) {
     return repo.update(data);
   }

@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
-import { PFOrderStatus } from '../shared/types/enums';
+import { PFOrderStatus, PFDeliveryMethod } from '../shared/types/enums';
 import type { PFOrderItem } from './pfOrderItem.model';
 
 interface PFOrderAttributes {
@@ -12,6 +12,7 @@ interface PFOrderAttributes {
   clientDni: string;
   clientCuil: string;
   clientAddress: string;
+  deliveryMethod: PFDeliveryMethod;
   total: number;
   status: PFOrderStatus;
   note: string | null;
@@ -33,6 +34,7 @@ export class PFOrder
   declare clientDni: string;
   declare clientCuil: string;
   declare clientAddress: string;
+  declare deliveryMethod: PFDeliveryMethod;
   declare total: number;
   declare status: PFOrderStatus;
   declare note: string | null;
@@ -81,6 +83,11 @@ PFOrder.init(
       type: DataTypes.STRING(300),
       allowNull: false,
       defaultValue: '',
+    },
+    deliveryMethod: {
+      type: DataTypes.ENUM(...Object.values(PFDeliveryMethod)),
+      allowNull: false,
+      defaultValue: PFDeliveryMethod.DELIVERY,
     },
     total: {
       type: DataTypes.DECIMAL(10, 2),
