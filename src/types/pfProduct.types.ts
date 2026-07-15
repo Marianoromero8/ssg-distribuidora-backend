@@ -11,6 +11,7 @@ export const createPFProductSchema = z.object({
     price: z.number().positive(),
     categoryId: z.string().uuid(),
     stock: z.number().int().min(0).optional(),
+    featured: z.boolean().optional(),
   }),
 });
 
@@ -27,6 +28,7 @@ export const updatePFProductSchema = z.object({
     categoryId: z.string().uuid().optional(),
     stock: z.number().int().min(0).optional(),
     active: z.boolean().optional(),
+    featured: z.boolean().optional(),
   }),
 });
 

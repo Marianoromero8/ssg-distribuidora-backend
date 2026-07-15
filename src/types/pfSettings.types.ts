@@ -7,6 +7,10 @@ export const updatePFSettingsSchema = z.object({
     alias: z.string(),
     cbu: z.string(),
     phone: z.string(),
+    address: z.string(),
+    instagramUrl: z.string(),
+    facebookUrl: z.string(),
+    whatsappUrl: z.string(),
   }),
 });
 

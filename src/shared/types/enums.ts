@@ -29,6 +29,11 @@ export enum PFOrderStatus {
   PAID = 'PAID',
 }
 
+export enum PFDeliveryMethod {
+  PICKUP = 'PICKUP',
+  DELIVERY = 'DELIVERY',
+}
+
 export enum DayOfWeek {
   MONDAY = 'MONDAY',
   TUESDAY = 'TUESDAY',

@@ -9,6 +9,11 @@ export class PFSettingsController {
     res.json({ status: 'success', data: settings });
   }
 
+  async getPublic(_req: Request, res: Response) {
+    const settings = await service.getPublicSettings();
+    res.json({ status: 'success', data: settings });
+  }
+
   async update(req: Request, res: Response) {
     const settings = await service.updateSettings(req.body);
     res.json({ status: 'success', data: settings });

@@ -11,13 +11,14 @@ interface PFProductAttributes {
   categoryId: string;
   stock: number;
   active: boolean;
+  featured: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 interface PFProductCreationAttributes extends Optional<
   PFProductAttributes,
-  'id' | 'code' | 'description' | 'imageUrl' | 'stock' | 'active'
+  'id' | 'code' | 'description' | 'imageUrl' | 'stock' | 'active' | 'featured'
 > {}
 
 export class PFProduct
@@ -33,6 +34,7 @@ export class PFProduct
   declare categoryId: string;
   declare stock: number;
   declare active: boolean;
+  declare featured: boolean;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -78,6 +80,11 @@ PFProduct.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+    },
+    featured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

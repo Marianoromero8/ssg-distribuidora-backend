@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { PFOrderService } from '../services/pfOrder.service';
 import { getPagination } from '../shared/utils/pagination';
-import { PFOrderStatus } from '../shared/types/enums';
+import { PFOrderStatus, PFDeliveryMethod } from '../shared/types/enums';
 
 const service = new PFOrderService();
 
@@ -9,6 +9,7 @@ export class PFOrderController {
   async getAll(req: Request, res: Response) {
     const pagination = getPagination(req);
     const status = req.query.status as PFOrderStatus | undefined;
+    const deliveryMethod = req.query.deliveryMethod as PFDeliveryMethod | undefined;
     const search = (req.query.search as string) || undefined;
     const dateFrom = req.query.dateFrom
       ? new Date(req.query.dateFrom as string)
@@ -16,7 +17,10 @@ export class PFOrderController {
     const dateTo = req.query.dateTo
       ? new Date(`${req.query.dateTo as string}T23:59:59`)
       : undefined;
-    const result = await service.getAll({ status, search, dateFrom, dateTo }, pagination);
+    const result = await service.getAll(
+      { status, deliveryMethod, search, dateFrom, dateTo },
+      pagination
+    );
     res.json({ status: 'success', data: result });
   }
 

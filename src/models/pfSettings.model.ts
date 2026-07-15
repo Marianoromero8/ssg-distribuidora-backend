@@ -8,6 +8,10 @@ interface PFSettingsAttributes {
   alias: string;
   cbu: string;
   phone: string;
+  address: string;
+  instagramUrl: string;
+  facebookUrl: string;
+  whatsappUrl: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,6 +28,10 @@ export class PFSettings
   declare alias: string;
   declare cbu: string;
   declare phone: string;
+  declare address: string;
+  declare instagramUrl: string;
+  declare facebookUrl: string;
+  declare whatsappUrl: string;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -56,6 +64,26 @@ PFSettings.init(
       defaultValue: '',
     },
     phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    instagramUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    facebookUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
+    whatsappUrl: {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: '',

@@ -2,7 +2,7 @@ import { Op, fn, col } from 'sequelize';
 import { PFOrder } from '../models/pfOrder.model';
 import { PFOrderItem } from '../models/pfOrderItem.model';
 import { PFProduct } from '../models/pfProduct.model';
-import { PFOrderStatus } from '../shared/types/enums';
+import { PFOrderStatus, PFDeliveryMethod } from '../shared/types/enums';
 import { PaginationOptions } from '../shared/utils/pagination';
 import { sequelize } from '../config/database';
 
@@ -18,6 +18,7 @@ const ITEM_INCLUDE = [
 
 export interface OrderFilters {
   status?: PFOrderStatus;
+  deliveryMethod?: PFDeliveryMethod;
   search?: string;
   dateFrom?: Date;
   dateTo?: Date;
@@ -28,6 +29,7 @@ export class PFOrderRepository {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
     if (filters.status) where.status = filters.status;
+    if (filters.deliveryMethod) where.deliveryMethod = filters.deliveryMethod;
     if (filters.search) {
       where[Op.or] = [
         { clientName: { [Op.iLike]: `%${filters.search}%` } },
@@ -63,6 +65,7 @@ export class PFOrderRepository {
       clientDni: string;
       clientCuil: string;
       clientAddress: string;
+      deliveryMethod: PFDeliveryMethod;
       total: number;
     },
     items: { productId: string; quantity: number; unitPrice: number }[]
