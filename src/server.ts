@@ -3,6 +3,8 @@ import { sequelize, connectDB } from './config/database';
 import { registerAssociations } from './database/associations';
 import { whatsappService } from './services/whatsapp.service';
 import { PFProductRepository } from './repositories/pfProduct.repository';
+import { PFOrderRepository } from './repositories/pfOrder.repository';
+import { PFMessageTemplateRepository } from './repositories/pfMessageTemplate.repository';
 import app from './app';
 
 async function bootstrap() {
@@ -13,6 +15,8 @@ async function bootstrap() {
   console.log('Database synced.');
 
   await new PFProductRepository().backfillMissingCodes();
+  await new PFOrderRepository().bootstrapOrderNumberSequence();
+  await new PFMessageTemplateRepository().seedDefaults();
 
   whatsappService.initialize();
 

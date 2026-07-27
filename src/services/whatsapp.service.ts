@@ -3,6 +3,12 @@ import qrcodeTerminal from 'qrcode-terminal';
 import qrcode from 'qrcode';
 import { AppError } from '../shared/errors/AppError';
 
+function toWhatsappChatId(phone: string): string {
+  const digitsOnly = phone.replace(/\D/g, '');
+  const withoutCountryCode = digitsOnly.replace(/^54(9)?/, '');
+  return `549${withoutCountryCode}@c.us`;
+}
+
 class WhatsAppService {
   private client!: Client;
   private isReady = false;
@@ -81,7 +87,7 @@ class WhatsAppService {
       console.warn('[WA] Cliente no listo — mensaje no enviado a', phone);
       return false;
     }
-    const chatId = `549${phone.replace(/\D/g, '')}@c.us`;
+    const chatId = toWhatsappChatId(phone);
     try {
       await this.client.sendMessage(chatId, message);
       console.log('[WA] Mensaje enviado a', chatId);

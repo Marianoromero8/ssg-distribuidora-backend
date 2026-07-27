@@ -74,7 +74,8 @@ All errors extend `AppError` (in `src/shared/errors/`). Throw them from services
 
 - `authenticate` middleware: verifies JWT, attaches `req.user = { id, email, role }`.
 - `authorize(...roles)` middleware factory: guards routes by role.
-- Roles: `ADMIN`, `EMPLOYEE`, `USER` (defined in `src/shared/types/enums.ts`).
+- Roles: `ADMIN`, `EMPLOYEE`, `CLIENT` (defined in `src/shared/types/enums.ts`).
+- `GET /users/me` and `GET /users/me/schedule` are self-service routes (any authenticated role) registered in `user.routes.ts` before the router-wide `authorize(Role.ADMIN)` gate — everything else under `/users` is ADMIN-only.
 - Read endpoints on products/brands/promotions are public. Writes require auth.
 - Delete operations require `ADMIN` only.
 
@@ -94,6 +95,8 @@ Use `validate(zodSchema)` middleware in routes. Schemas live in `*.types.ts` and
 ```ts
 router.post('/', authenticate, authorize(Role.ADMIN), validate(createProductSchema), ctrl.create.bind(ctrl));
 ```
+
+`validate()` reassigns `req.body`, `req.query`, and `req.params` from the parsed/coerced Zod output (fixed 2026-07-22 — it used to silently drop `query`/`params`). When adding a `query: z.object({...})` block, always add `.passthrough()` to it, otherwise pagination params (`page`/`limit`, read directly off `req.query` by `shared/utils/pagination.ts`) get stripped since Zod's default `.object()` mode removes unrecognized keys.
 
 ## API prefix
 

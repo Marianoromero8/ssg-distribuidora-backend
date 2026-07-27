@@ -10,6 +10,10 @@ import { Role } from '../shared/types/enums';
 const router = Router();
 const ctrl = new UserController();
 
+// Self-service — cualquier usuario autenticado consulta sus propios datos
+router.get('/me', authenticate, ctrl.getMe.bind(ctrl));
+router.get('/me/schedule', authenticate, ctrl.getMySchedule.bind(ctrl));
+
 router.use(authenticate, authorize(Role.ADMIN));
 
 router.get('/', ctrl.getAll.bind(ctrl));

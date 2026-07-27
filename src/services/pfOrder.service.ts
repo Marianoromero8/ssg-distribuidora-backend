@@ -4,6 +4,7 @@ import { CreatePFOrderDto, UpdatePFOrderStatusDto } from '../types/pfOrder.types
 import { NotFoundError } from '../shared/errors/NotFoundError';
 import { AppError } from '../shared/errors/AppError';
 import { PFOrderStatus } from '../shared/types/enums';
+import { sequelize } from '../config/database';
 import { PaginationOptions, buildPaginatedResponse } from '../shared/utils/pagination';
 import { whatsappService } from './whatsapp.service';
 import { buildAcceptedMessage, buildDeclinedMessage } from '../utils/pfMessages';
@@ -26,15 +27,18 @@ export class PFOrderService {
   }
 
   async create(data: CreatePFOrderDto) {
+    const products = await productRepo.findByIds(data.items.map((i) => i.productId));
+    const productById = new Map(products.map((p) => [p.id, p]));
+
     const resolvedItems: { productId: string; quantity: number; unitPrice: number }[] = [];
     let total = 0;
 
     for (const item of data.items) {
-      const product = await productRepo.findById(item.productId);
+      const product = productById.get(item.productId);
       if (!product) throw new NotFoundError(`Product ${item.productId}`);
       if (!product.active) throw new AppError(`Product ${product.name} is not available`, 400);
-      if (product.stock < item.quantity)
-        throw new AppError(`Sin stock suficiente para ${product.name}`, 400);
+      // El chequeo de stock se hace dentro de PFOrderRepository.create(), con
+      // lock de fila, para evitar overselling con pedidos concurrentes.
 
       const unitPrice = Number(product.price);
       resolvedItems.push({ productId: item.productId, quantity: item.quantity, unitPrice });
@@ -63,29 +67,40 @@ export class PFOrderService {
     const order = await repo.findById(id);
     if (!order) throw new NotFoundError('Order');
 
-    if (data.status === PFOrderStatus.PAID) {
-      if (order.status !== PFOrderStatus.ACCEPTED) {
-        throw new AppError('Solo se puede cobrar un pedido que fue aceptado', 400);
+    await sequelize.transaction(async (t) => {
+      const locked = await repo.findByIdForUpdate(id, t);
+      if (!locked) throw new NotFoundError('Order');
+
+      if (data.status === PFOrderStatus.PAID) {
+        if (locked.status !== PFOrderStatus.ACCEPTED) {
+          throw new AppError('Solo se puede cobrar un pedido que fue aceptado', 400);
+        }
+      } else if (data.status === PFOrderStatus.DECLINED) {
+        // Rechazar/cancelar es válido tanto para un pedido pendiente como para
+        // uno ya aceptado que nunca se pagó (ej. cliente no se presenta).
+        if (locked.status !== PFOrderStatus.PENDING && locked.status !== PFOrderStatus.ACCEPTED) {
+          throw new AppError('El pedido ya fue procesado', 400);
+        }
+      } else if (locked.status !== PFOrderStatus.PENDING) {
+        throw new AppError('El pedido ya fue procesado', 400);
       }
-    } else if (order.status !== PFOrderStatus.PENDING) {
-      throw new AppError('El pedido ya fue procesado', 400);
-    }
 
-    await repo.updateStatus(id, data.status, data.note);
+      await repo.updateStatus(id, data.status, data.note, t);
 
-    if (data.status === PFOrderStatus.DECLINED) {
-      await repo.restoreStock(id);
-    }
-
-    if (data.status === PFOrderStatus.ACCEPTED && data.confirmedItemIds) {
-      const allItemIds = (order.items ?? []).map((i) => i.id as string);
-      const unconfirmedIds = allItemIds.filter(
-        (itemId) => !data.confirmedItemIds!.includes(itemId)
-      );
-      if (unconfirmedIds.length > 0) {
-        await repo.restoreStockForItems(unconfirmedIds);
+      if (data.status === PFOrderStatus.DECLINED) {
+        await repo.restoreStock(id, t);
       }
-    }
+
+      if (data.status === PFOrderStatus.ACCEPTED && data.confirmedItemIds) {
+        const allItemIds = (order.items ?? []).map((i) => i.id as string);
+        const unconfirmedIds = allItemIds.filter(
+          (itemId) => !data.confirmedItemIds!.includes(itemId)
+        );
+        if (unconfirmedIds.length > 0) {
+          await repo.restoreStockForItems(unconfirmedIds, t);
+        }
+      }
+    });
 
     const updated = await repo.findById(id);
 
@@ -96,6 +111,7 @@ export class PFOrderService {
 
     if (needsWA) {
       try {
+        const settings = await settingsRepo.get();
         if (data.status === PFOrderStatus.ACCEPTED && data.confirmedItemIds) {
           const confirmedItems = (updated?.items ?? []).filter((i) =>
             data.confirmedItemIds!.includes(i.id as string)
@@ -104,8 +120,7 @@ export class PFOrderService {
             (sum, i) => sum + Number(i.unitPrice) * i.quantity,
             0
           );
-          const settings = await settingsRepo.get();
-          const msg = buildAcceptedMessage(
+          const msg = await buildAcceptedMessage(
             order,
             confirmedItems,
             total,
@@ -118,7 +133,11 @@ export class PFOrderService {
           );
           whatsappSent = await whatsappService.sendMessage(order.clientPhone, msg);
         } else if (data.status === PFOrderStatus.DECLINED) {
-          const msg = buildDeclinedMessage(order);
+          const msg = await buildDeclinedMessage(order, {
+            instagram: settings.instagramUrl,
+            facebook: settings.facebookUrl,
+            whatsapp: settings.whatsappUrl,
+          });
           whatsappSent = await whatsappService.sendMessage(order.clientPhone, msg);
         }
       } catch (e) {

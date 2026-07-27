@@ -36,5 +36,27 @@ export const updateProductSchema = z.object({
   }),
 });
 
+export const getProductsQuerySchema = z.object({
+  query: z
+    .object({
+      categoryId: z.string().uuid().optional(),
+      brandId: z.string().uuid().optional(),
+      isFeatured: z.enum(['true', 'false']).optional(),
+    })
+    .passthrough(),
+});
+
+export const getProductsAdminQuerySchema = z.object({
+  query: z
+    .object({
+      categoryId: z.string().uuid().optional(),
+      brandId: z.string().uuid().optional(),
+      isFeatured: z.enum(['true', 'false']).optional(),
+      available: z.enum(['true', 'false']).optional(),
+      isPuntoFiesta: z.enum(['true', 'false']).optional(),
+    })
+    .passthrough(),
+});
+
 export type CreateProductDto = z.infer<typeof createProductSchema>['body'];
 export type UpdateProductDto = z.infer<typeof updateProductSchema>['body'];

@@ -17,17 +17,6 @@ export class ProductController {
     res.json({ status: 'success', data: result });
   }
 
-  async getPuntoFiesta(req: Request, res: Response) {
-    const pagination = getPagination(req);
-    const filters = {
-      categoryId: req.query.categoryId as string | undefined,
-      brandId: req.query.brandId as string | undefined,
-      isPuntoFiesta: true,
-    };
-    const result = await service.getAll(filters, pagination);
-    res.json({ status: 'success', data: result });
-  }
-
   async getAllAdmin(req: Request, res: Response) {
     const pagination = getPagination(req);
     const { categoryId, brandId, isFeatured, available, isPuntoFiesta } = req.query;
