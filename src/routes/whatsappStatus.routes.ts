@@ -7,9 +7,7 @@ import { Role } from '../shared/types/enums';
 const router = Router();
 const ctrl = new WhatsappStatusController();
 
-// Público — sin datos sensibles (solo boolean + timestamps), pensado para
-// que un monitor externo (UptimeRobot) lo pueda pollear sin autenticación.
-router.get('/status', ctrl.get.bind(ctrl));
+router.get('/status', authenticate, ctrl.get.bind(ctrl));
 
 router.get('/qr', authenticate, authorize(Role.ADMIN), ctrl.getQr.bind(ctrl));
 router.post('/reconnect', authenticate, authorize(Role.ADMIN), ctrl.reconnect.bind(ctrl));

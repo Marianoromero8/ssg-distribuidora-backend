@@ -8,11 +8,12 @@ interface PFOrderItemAttributes {
   productId: string;
   quantity: number;
   unitPrice: number;
+  stockRestored: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface PFOrderItemCreationAttributes extends Optional<PFOrderItemAttributes, 'id'> {}
+interface PFOrderItemCreationAttributes extends Optional<PFOrderItemAttributes, 'id' | 'stockRestored'> {}
 
 export class PFOrderItem
   extends Model<PFOrderItemAttributes, PFOrderItemCreationAttributes>
@@ -23,6 +24,7 @@ export class PFOrderItem
   declare productId: string;
   declare quantity: number;
   declare unitPrice: number;
+  declare stockRestored: boolean;
   declare createdAt: Date;
   declare updatedAt: Date;
   declare product?: PFProduct;
@@ -50,6 +52,11 @@ PFOrderItem.init(
     unitPrice: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+    },
+    stockRestored: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

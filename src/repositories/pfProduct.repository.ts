@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import { sequelize } from '../config/database';
 import { PFProduct } from '../models/pfProduct.model';
 import { PFCategory } from '../models/pfCategory.model';
+import { PFOrderItem } from '../models/pfOrderItem.model';
 import { CreatePFProductDto, UpdatePFProductDto } from '../types/pfProduct.types';
 
 const CATEGORY_INCLUDE = [{ model: PFCategory, as: 'category' }];
@@ -15,6 +16,18 @@ export class PFProductRepository {
 
   findById(id: string) {
     return PFProduct.findByPk(id, { include: CATEGORY_INCLUDE });
+  }
+
+  findByIds(ids: string[]) {
+    return PFProduct.findAll({ where: { id: ids } });
+  }
+
+  countByCategory(categoryId: string) {
+    return PFProduct.count({ where: { categoryId } });
+  }
+
+  countOrderHistory(productId: string) {
+    return PFOrderItem.count({ where: { productId } });
   }
 
   findByCode(code: string, excludeId?: string) {

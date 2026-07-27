@@ -4,14 +4,18 @@ import { authenticate } from '../middlewares/authenticate';
 import { authorize } from '../middlewares/authorize';
 import { validate } from '../middlewares/validate';
 import { upload } from '../middlewares/upload';
-import { createPFProductSchema, updatePFProductSchema } from '../types/pfProduct.types';
+import {
+  createPFProductSchema,
+  updatePFProductSchema,
+  getPFProductsQuerySchema,
+} from '../types/pfProduct.types';
 import { Role } from '../shared/types/enums';
 
 const router = Router();
 const ctrl = new PFProductController();
 
 // Public
-router.get('/', ctrl.getAll.bind(ctrl));
+router.get('/', validate(getPFProductsQuerySchema), ctrl.getAll.bind(ctrl));
 router.get('/:id', ctrl.getById.bind(ctrl));
 
 // Admin

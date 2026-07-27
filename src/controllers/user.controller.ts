@@ -17,6 +17,16 @@ export class UserController {
     res.json({ status: 'success', data: user });
   }
 
+  async getMe(req: Request, res: Response) {
+    const user = await service.getById(req.user!.id);
+    res.json({ status: 'success', data: user });
+  }
+
+  async getMySchedule(req: Request, res: Response) {
+    const schedules = await scheduleService.getByUser(req.user!.id);
+    res.json({ status: 'success', data: schedules });
+  }
+
   async create(req: Request, res: Response) {
     const user = await service.create(req.body);
     res.status(201).json({ status: 'success', data: user });

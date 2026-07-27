@@ -4,14 +4,25 @@ import { authenticate } from '../middlewares/authenticate';
 import { authorize } from '../middlewares/authorize';
 import { validate } from '../middlewares/validate';
 import { upload } from '../middlewares/upload';
-import { createProductSchema, updateProductSchema } from '../types/product.types';
+import {
+  createProductSchema,
+  updateProductSchema,
+  getProductsQuerySchema,
+  getProductsAdminQuerySchema,
+} from '../types/product.types';
 import { Role } from '../shared/types/enums';
 
 const router = Router();
 const ctrl = new ProductController();
 
-router.get('/', ctrl.getAll.bind(ctrl));
-router.get('/admin', authenticate, authorize(Role.ADMIN, Role.EMPLOYEE), ctrl.getAllAdmin.bind(ctrl));
+router.get('/', validate(getProductsQuerySchema), ctrl.getAll.bind(ctrl));
+router.get(
+  '/admin',
+  authenticate,
+  authorize(Role.ADMIN, Role.EMPLOYEE),
+  validate(getProductsAdminQuerySchema),
+  ctrl.getAllAdmin.bind(ctrl)
+);
 router.get('/:id', ctrl.getById.bind(ctrl));
 
 router.post('/', authenticate, authorize(Role.ADMIN), validate(createProductSchema), ctrl.create.bind(ctrl));

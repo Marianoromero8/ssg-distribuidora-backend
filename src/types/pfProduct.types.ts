@@ -32,5 +32,13 @@ export const updatePFProductSchema = z.object({
   }),
 });
 
+export const getPFProductsQuerySchema = z.object({
+  query: z
+    .object({
+      all: z.enum(['true', 'false']).optional(),
+    })
+    .passthrough(),
+});
+
 export type CreatePFProductDto = z.infer<typeof createPFProductSchema>['body'];
 export type UpdatePFProductDto = z.infer<typeof updatePFProductSchema>['body'];

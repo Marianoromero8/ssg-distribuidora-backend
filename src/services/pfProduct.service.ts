@@ -60,6 +60,13 @@ export class PFProductService {
   async delete(id: string) {
     const product = await repo.findById(id);
     if (!product) throw new NotFoundError('Product');
+    const orderCount = await repo.countOrderHistory(id);
+    if (orderCount > 0) {
+      throw new AppError(
+        `No se puede eliminar "${product.name}": tiene ${orderCount} pedido(s) en su historial. Desactivalo en vez de eliminarlo.`,
+        409
+      );
+    }
     await repo.destroy(id);
   }
 }

@@ -5,6 +5,7 @@ import type { PFOrderItem } from './pfOrderItem.model';
 
 interface PFOrderAttributes {
   id: string;
+  orderNumber: number;
   clientName: string;
   clientSurname: string;
   clientEmail: string;
@@ -20,13 +21,15 @@ interface PFOrderAttributes {
   updatedAt?: Date;
 }
 
-interface PFOrderCreationAttributes extends Optional<PFOrderAttributes, 'id' | 'note' | 'status'> {}
+interface PFOrderCreationAttributes
+  extends Optional<PFOrderAttributes, 'id' | 'note' | 'status' | 'orderNumber'> {}
 
 export class PFOrder
   extends Model<PFOrderAttributes, PFOrderCreationAttributes>
   implements PFOrderAttributes
 {
   declare id: string;
+  declare orderNumber: number;
   declare clientName: string;
   declare clientSurname: string;
   declare clientEmail: string;
@@ -49,6 +52,15 @@ PFOrder.init(
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+    },
+    orderNumber: {
+      type: DataTypes.INTEGER,
+      // Nullable at the Sequelize level on purpose, so sync({ alter: true })
+      // can add this column to an already-populated table without failing.
+      // The real NOT NULL constraint is applied at the Postgres level after
+      // the one-time backfill (see PFOrderRepository.bootstrapOrderNumberSequence).
+      allowNull: true,
+      unique: true,
     },
     clientName: {
       type: DataTypes.STRING(200),
