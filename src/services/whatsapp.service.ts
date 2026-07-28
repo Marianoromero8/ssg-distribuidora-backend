@@ -1,6 +1,8 @@
 import { Client, LocalAuth } from 'whatsapp-web.js';
 import qrcodeTerminal from 'qrcode-terminal';
 import qrcode from 'qrcode';
+import fs from 'fs';
+import path from 'path';
 import { AppError } from '../shared/errors/AppError';
 import { env } from '../config/env';
 
@@ -8,6 +10,21 @@ function toWhatsappChatId(phone: string): string {
   const digitsOnly = phone.replace(/\D/g, '');
   const withoutCountryCode = digitsOnly.replace(/^54(9)?/, '');
   return `549${withoutCountryCode}@c.us`;
+}
+
+// Con disco persistente, un contenedor anterior que se mató sin cerrar Chrome
+// prolijo (redeploy, OOM) puede dejar el lock del perfil pisado. Como acá solo
+// corre una instancia de este servicio, cualquier lock presente al arrancar es
+// obsoleto y se puede borrar sin riesgo.
+function clearStaleChromeLock(dataPath: string) {
+  const sessionDir = path.join(path.resolve(dataPath), 'session');
+  for (const lockFile of ['SingletonLock', 'SingletonSocket', 'SingletonCookie']) {
+    try {
+      fs.rmSync(path.join(sessionDir, lockFile), { force: true });
+    } catch {
+      // no existía, nada que limpiar
+    }
+  }
 }
 
 class WhatsAppService {
@@ -20,6 +37,7 @@ class WhatsAppService {
   private latestQr: string | null = null;
 
   initialize() {
+    clearStaleChromeLock(env.WWEBJS_AUTH_PATH);
     this.client = new Client({
       authStrategy: new LocalAuth({ dataPath: env.WWEBJS_AUTH_PATH }),
       puppeteer: {
