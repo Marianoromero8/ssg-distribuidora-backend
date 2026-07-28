@@ -2,6 +2,7 @@ import { Client, LocalAuth } from 'whatsapp-web.js';
 import qrcodeTerminal from 'qrcode-terminal';
 import qrcode from 'qrcode';
 import { AppError } from '../shared/errors/AppError';
+import { env } from '../config/env';
 
 function toWhatsappChatId(phone: string): string {
   const digitsOnly = phone.replace(/\D/g, '');
@@ -12,6 +13,7 @@ function toWhatsappChatId(phone: string): string {
 class WhatsAppService {
   private client!: Client;
   private isReady = false;
+  private isReconnecting = false;
   private lastReadyAt: Date | null = null;
   private lastDisconnectedAt: Date | null = null;
   private lastDisconnectReason: string | null = null;
@@ -19,7 +21,7 @@ class WhatsAppService {
 
   initialize() {
     this.client = new Client({
-      authStrategy: new LocalAuth({ dataPath: './.wwebjs_auth' }),
+      authStrategy: new LocalAuth({ dataPath: env.WWEBJS_AUTH_PATH }),
       puppeteer: {
         args: [
           '--no-sandbox',
@@ -94,7 +96,48 @@ class WhatsAppService {
       return true;
     } catch (err) {
       console.error('[WA] Error al enviar mensaje a', chatId, err);
+      if (this.isBrokenPageError(err)) {
+        return this.recoverAndRetry(chatId, message);
+      }
       return false;
+    }
+  }
+
+  private isBrokenPageError(err: unknown): boolean {
+    return err instanceof TypeError && /reading 'evaluate'/.test(err.message);
+  }
+
+  private async waitUntilReady(timeoutMs = 20000): Promise<boolean> {
+    const start = Date.now();
+    while (!this.isReady && Date.now() - start < timeoutMs) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+    return this.isReady;
+  }
+
+  private async recoverAndRetry(chatId: string, message: string): Promise<boolean> {
+    if (this.isReconnecting) {
+      console.warn('[WA] Ya hay una reconexión en curso — no se reintenta el envío a', chatId);
+      return false;
+    }
+    this.isReconnecting = true;
+    this.isReady = false;
+    console.warn('[WA] Página interna rota detectada — reconectando cliente...');
+    try {
+      await this.reconnect();
+      const recovered = await this.waitUntilReady();
+      if (!recovered) {
+        console.error('[WA] No se pudo reconectar a tiempo — mensaje no reenviado a', chatId);
+        return false;
+      }
+      await this.client.sendMessage(chatId, message);
+      console.log('[WA] Mensaje reenviado tras reconexión a', chatId);
+      return true;
+    } catch (err) {
+      console.error('[WA] Reintento tras reconexión falló para', chatId, err);
+      return false;
+    } finally {
+      this.isReconnecting = false;
     }
   }
 
