@@ -25,6 +25,7 @@ const envSchema = z.object({
   PF_INSTAGRAM: z.string().default('@puntofiesta'),
   PF_FACEBOOK: z.string().default('Punto Fiesta'),
   PF_WHATSAPP_URL: z.string().default('https://wa.me/549XXXXXXXXXX'),
+  WWEBJS_AUTH_PATH: z.string().default('./.wwebjs_auth'),
 });
 
 const parsed = envSchema.safeParse(process.env);
