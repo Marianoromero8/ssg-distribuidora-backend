@@ -6,13 +6,20 @@ import { PFOrderStatus, PFDeliveryMethod } from '../shared/types/enums';
 import { PaginationOptions } from '../shared/utils/pagination';
 import { sequelize } from '../config/database';
 import { AppError } from '../shared/errors/AppError';
+import { PFCustomerRepository } from './pfCustomer.repository';
 
 export type StatsPeriod = 'day' | 'week' | 'month' | 'year';
 
-// Postgres SQLSTATE 40P01 = deadlock_detected. Aun con un orden consistente de
-// locks, checkouts muy concurrentes sobre el mismo producto pueden seguir
-// generando deadlocks esporádicos (comportamiento documentado de Postgres) —
-// reintentar la transacción es la mitigación estándar recomendada por Postgres.
+const customerRepo = new PFCustomerRepository();
+
+// Postgres SQLSTATE 40P01 = deadlock_detected, 23505 = unique_violation (dos
+// pedidos concurrentes de un cliente nuevo pueden chocar al crear su
+// PFCustomer por DNI). Aun con un orden consistente de locks, checkouts muy
+// concurrentes sobre el mismo producto pueden seguir generando deadlocks
+// esporádicos (comportamiento documentado de Postgres) — reintentar la
+// transacción es la mitigación estándar recomendada en ambos casos.
+const RETRYABLE_CODES = new Set(['40P01', '23505']);
+
 async function withDeadlockRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
@@ -20,8 +27,8 @@ async function withDeadlockRetry<T>(fn: () => Promise<T>, attempts = 3): Promise
     } catch (err) {
       const code = (err as { parent?: { code?: string }; original?: { code?: string } })?.parent
         ?.code;
-      const isDeadlock = code === '40P01';
-      if (!isDeadlock || attempt === attempts) throw err;
+      const isRetryable = !!code && RETRYABLE_CODES.has(code);
+      if (!isRetryable || attempt === attempts) throw err;
       await new Promise((resolve) => setTimeout(resolve, 30 * attempt + Math.random() * 50));
     }
   }
@@ -150,7 +157,24 @@ export class PFOrderRepository {
           }
         }
 
-        const order = await PFOrder.create(orderData, { transaction: t });
+        const customer = await customerRepo.findOrCreateByDni(
+          {
+            dni: orderData.clientDni,
+            name: orderData.clientName,
+            surname: orderData.clientSurname,
+            email: orderData.clientEmail,
+            phone: orderData.clientPhone,
+            cuil: orderData.clientCuil,
+            address: orderData.clientAddress,
+          },
+          new Date(),
+          t
+        );
+
+        const order = await PFOrder.create(
+          { ...orderData, customerId: customer.id },
+          { transaction: t }
+        );
         await PFOrderItem.bulkCreate(
           items.map((item) => ({ ...item, orderId: order.id })),
           { transaction: t }

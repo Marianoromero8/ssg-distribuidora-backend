@@ -2,10 +2,12 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
 import { PFOrderStatus, PFDeliveryMethod } from '../shared/types/enums';
 import type { PFOrderItem } from './pfOrderItem.model';
+import type { PFCustomer } from './pfCustomer.model';
 
 interface PFOrderAttributes {
   id: string;
   orderNumber: number;
+  customerId: string | null;
   clientName: string;
   clientSurname: string;
   clientEmail: string;
@@ -22,7 +24,7 @@ interface PFOrderAttributes {
 }
 
 interface PFOrderCreationAttributes
-  extends Optional<PFOrderAttributes, 'id' | 'note' | 'status' | 'orderNumber'> {}
+  extends Optional<PFOrderAttributes, 'id' | 'note' | 'status' | 'orderNumber' | 'customerId'> {}
 
 export class PFOrder
   extends Model<PFOrderAttributes, PFOrderCreationAttributes>
@@ -30,6 +32,7 @@ export class PFOrder
 {
   declare id: string;
   declare orderNumber: number;
+  declare customerId: string | null;
   declare clientName: string;
   declare clientSurname: string;
   declare clientEmail: string;
@@ -44,6 +47,7 @@ export class PFOrder
   declare createdAt: Date;
   declare updatedAt: Date;
   declare items?: PFOrderItem[];
+  declare customer?: PFCustomer;
 }
 
 PFOrder.init(
@@ -61,6 +65,10 @@ PFOrder.init(
       // the one-time backfill (see PFOrderRepository.bootstrapOrderNumberSequence).
       allowNull: true,
       unique: true,
+    },
+    customerId: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
     clientName: {
       type: DataTypes.STRING(200),
