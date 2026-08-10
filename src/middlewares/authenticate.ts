@@ -19,7 +19,12 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
 
   const token = authHeader.split(' ')[1];
 
-  const decoded = jwt.verify(token, env.JWT_SECRET) as TokenPayload;
-  req.user = decoded;
+  try {
+    const decoded = jwt.verify(token, env.JWT_SECRET) as TokenPayload;
+    req.user = decoded;
+  } catch {
+    throw new UnauthorizedError('Token expired or invalid');
+  }
+
   next();
 }

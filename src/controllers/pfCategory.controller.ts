@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { PFCategoryService } from '../services/pfCategory.service';
+import { AppError } from '../shared/errors/AppError';
 
 const service = new PFCategoryService();
 
@@ -21,6 +22,12 @@ export class PFCategoryController {
 
   async update(req: Request, res: Response) {
     const category = await service.update(req.params.id, req.body);
+    res.json({ status: 'success', data: category });
+  }
+
+  async uploadImage(req: Request, res: Response) {
+    if (!req.file) throw new AppError('No file uploaded', 400);
+    const category = await service.uploadImage(req.params.id, req.file);
     res.json({ status: 'success', data: category });
   }
 
