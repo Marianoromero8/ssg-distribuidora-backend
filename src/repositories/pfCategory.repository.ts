@@ -23,6 +23,11 @@ export class PFCategoryRepository {
     return this.findById(id);
   }
 
+  async updateImage(id: string, imageUrl: string) {
+    await PFCategory.update({ imageUrl }, { where: { id } });
+    return this.findById(id);
+  }
+
   destroy(id: string) {
     return PFCategory.destroy({ where: { id } });
   }

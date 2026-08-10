@@ -6,11 +6,14 @@ interface PFCategoryAttributes {
   name: string;
   slug: string;
   active: boolean;
+  imageUrl: string | null;
+  featuredOnHome: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-interface PFCategoryCreationAttributes extends Optional<PFCategoryAttributes, 'id' | 'active'> {}
+interface PFCategoryCreationAttributes
+  extends Optional<PFCategoryAttributes, 'id' | 'active' | 'imageUrl' | 'featuredOnHome'> {}
 
 export class PFCategory
   extends Model<PFCategoryAttributes, PFCategoryCreationAttributes>
@@ -20,6 +23,8 @@ export class PFCategory
   declare name: string;
   declare slug: string;
   declare active: boolean;
+  declare imageUrl: string | null;
+  declare featuredOnHome: boolean;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -44,6 +49,15 @@ PFCategory.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    featuredOnHome: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {
