@@ -3,6 +3,7 @@ import { PFProductRepository } from '../repositories/pfProduct.repository';
 import { CreatePFCategoryDto, UpdatePFCategoryDto } from '../types/pfCategory.types';
 import { NotFoundError } from '../shared/errors/NotFoundError';
 import { AppError } from '../shared/errors/AppError';
+import { uploadToCloudinary } from '../middlewares/upload';
 
 const repo = new PFCategoryRepository();
 const productRepo = new PFProductRepository();
@@ -32,6 +33,13 @@ export class PFCategoryService {
       if (existing) throw new AppError('A category with this slug already exists', 409);
     }
     return repo.update(id, data);
+  }
+
+  async uploadImage(id: string, file: Express.Multer.File) {
+    const category = await repo.findById(id);
+    if (!category) throw new NotFoundError('Category');
+    const imageUrl = await uploadToCloudinary(file.buffer, 'punto-fiesta/categories');
+    return repo.updateImage(id, imageUrl);
   }
 
   async delete(id: string) {

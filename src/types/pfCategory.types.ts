@@ -22,6 +22,7 @@ export const updatePFCategorySchema = z.object({
       .regex(/^[a-z0-9-]+$/)
       .optional(),
     active: z.boolean().optional(),
+    featuredOnHome: z.boolean().optional(),
   }),
 });
 
