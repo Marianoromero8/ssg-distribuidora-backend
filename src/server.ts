@@ -4,6 +4,7 @@ import { registerAssociations } from './database/associations';
 import { whatsappService } from './services/whatsapp.service';
 import { PFProductRepository } from './repositories/pfProduct.repository';
 import { PFOrderRepository } from './repositories/pfOrder.repository';
+import { PFCustomerRepository } from './repositories/pfCustomer.repository';
 import { PFMessageTemplateRepository } from './repositories/pfMessageTemplate.repository';
 import app from './app';
 
@@ -16,6 +17,7 @@ async function bootstrap() {
 
   await new PFProductRepository().backfillMissingCodes();
   await new PFOrderRepository().bootstrapOrderNumberSequence();
+  await new PFCustomerRepository().backfillCustomersFromOrders();
   await new PFMessageTemplateRepository().seedDefaults();
 
   whatsappService.initialize();
