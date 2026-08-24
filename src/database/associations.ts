@@ -9,6 +9,7 @@ import { PFOrder } from '../models/pfOrder.model';
 import { PFOrderItem } from '../models/pfOrderItem.model';
 import { PFCategory } from '../models/pfCategory.model';
 import { PFProduct } from '../models/pfProduct.model';
+import { PFCustomer } from '../models/pfCustomer.model';
 
 export function registerAssociations(): void {
   // Brand → Product
@@ -42,6 +43,10 @@ export function registerAssociations(): void {
   // PFOrder → PFOrderItem
   PFOrder.hasMany(PFOrderItem, { foreignKey: 'orderId', as: 'items' });
   PFOrderItem.belongsTo(PFOrder, { foreignKey: 'orderId', as: 'order' });
+
+  // PFCustomer → PFOrder
+  PFCustomer.hasMany(PFOrder, { foreignKey: 'customerId', as: 'orders' });
+  PFOrder.belongsTo(PFCustomer, { foreignKey: 'customerId', as: 'customer' });
 
   // PFOrderItem → PFProduct (constraints: false — FK is managed manually in DB)
   PFOrderItem.belongsTo(PFProduct, { foreignKey: 'productId', as: 'product', constraints: false });
