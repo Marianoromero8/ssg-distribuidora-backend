@@ -91,18 +91,7 @@ export class PFCustomerRepository {
   ): Promise<PFCustomer> {
     const existing = await PFCustomer.findOne({ where: { dni: data.dni }, transaction: t });
     if (existing) {
-      await existing.update(
-        {
-          name: data.name,
-          surname: data.surname,
-          email: data.email,
-          phone: data.phone,
-          cuil: data.cuil,
-          address: data.address,
-          lastOrderAt: orderDate,
-        },
-        { transaction: t }
-      );
+      await existing.update({ lastOrderAt: orderDate }, { transaction: t });
       return existing;
     }
     return PFCustomer.create(
